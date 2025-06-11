@@ -1,5 +1,5 @@
 
-import SignUpForm from "@/components/client/singup";
+import SignUpForm from "@/components/Auth/singup";
 import { auth } from "@/lib/auth";
 
 export default async function SignUp() {

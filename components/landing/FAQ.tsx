@@ -86,7 +86,7 @@ function FAQ() {
             </AccordionTrigger>
             <AccordionContent>
               Clients can reset their password using the &quot;Forgot
-              Password&quot; option on the login page. A password reset link
+              Password&quot; option on the log in page. A password reset link
               will be sent to their registered email, allowing them to set a new
               password. For added security, password reset links expire after a
               short duration.

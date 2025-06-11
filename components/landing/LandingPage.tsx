@@ -3,19 +3,22 @@ import FAQ from "./FAQ";
 import Footer from "./Footer";
 
 import Hero from "./Hero";
+import Purchase from "./Purchase";
+// import ImageToggleComponent from "./Replit";
 
 export default function LandingPage() {
   return (
     <>
-      
 
 
-        <Hero />
+
+      <Hero />
 
 
       <About />
-
+      <Purchase />
       <FAQ />
+      {/* <ImageToggleComponent /> */}
 
       <Footer />
     </>
