@@ -1,4 +1,4 @@
-import SignInForm from "@/components/client/signin";
+import SignInForm from "@/components/Auth/signin";
 import { auth } from "@/lib/auth";
 
 async function SignIn() {

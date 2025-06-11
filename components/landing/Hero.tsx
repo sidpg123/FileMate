@@ -1,19 +1,18 @@
 "use client";
-import Image from "next/image";
-import { Button } from "../ui/button";
 import ArrowCircleUpIcon from "@mui/icons-material/ArrowCircleUp";
-import { useRouter } from "next/navigation";
+import { SessionProvider } from "next-auth/react";
+import Image from "next/image";
 import Navbar from "../Navbar";
+import { Button } from "../ui/button";
+import HeroRedirect from "../ui/HeroRedirect";
 
 function Hero() {
-  const router = useRouter();
 
-  const handleRegisterClick = () => {
-    router.push("/signup"); // Navigate to the signup page
-  };
   return (
     <section className="min-h-screen">
-      <Navbar />
+      <SessionProvider>
+        <Navbar />
+      </SessionProvider>
       <div className="flex flex-col md:flex-row-reverse justify-center pt-14 md:pt-32 mx-auto md:max-w-[95%]">
         <div className="w-full mx-auto max-w-[80%] flex justify-center items-center px-6 sm:w-9/12 md:w-2/4 xl:w-[40%]">
           <Image
@@ -37,21 +36,15 @@ function Hero() {
             with your clients – secure, accessible, and hassle-free anytime.
           </h4>
           <div className="mt-6 flex flex-row">
-            <Button
-              className="py-5 px-7 mr-3 bg-[#4A72FF] hover:bg-blue-500 shadow-md shadow-blue-600"
-              onClick={handleRegisterClick} // Use the function to navigate
-            >
-              Register <ArrowCircleUpIcon className="rotate-90" />
-            </Button>
+            <SessionProvider>
+              <HeroRedirect route="signup" title="Register" styles="py-5 px-7 mr-3" extraComp={<ArrowCircleUpIcon className="rotate-90" />} />
+            </SessionProvider>
             <Button className="py-5 px-7 mx-auto text-[#4A72FF] bg-[#f1f1f3] hover:bg-[#f1eeeeee] shadow-md shadow-slate-300">
               Learn More
             </Button>
           </div>
         </div>
       </div>
-      {/* <h1 className="absolute bottom-10 left-[50%] text-sm font-bold tracking-wider bg-gradient-to-r from-[#4A72FF] via-[#5C53D1] to-[#712D99] bg-clip-text text-transparent">
-        Swipte Down
-      </h1> */}
     </section>
   );
 }

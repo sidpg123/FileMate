@@ -5,13 +5,26 @@ import MenuIcon from "@mui/icons-material/Menu";
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from 'next/navigation'
-import { useSession } from "next-auth/react";
-import HeroRedirect from "./ui/HeroRedirect";
+import NewClientDialog from "./NewClientDialog";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { signOut } from "next-auth/react"
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { sign } from "crypto";
+import Image from "next/image";
+import { toast } from "sonner";
+
 function Navbar() {
   const router = useRouter()
   const [isClick, setIsClick] = useState(false);
-  const  session  = useSession();
-  
+  const [isOpen, setIsOpen] = useState(false);
 
   const toggleNavbar = () => {
     setIsClick(!isClick);
@@ -31,19 +44,42 @@ function Navbar() {
             </div>
             <div className="hidden md:block">
               <div className="ml-4 flex items-center space-x-16">
-                <Link href={"/"}>About</Link>
-                <Link href={"/"}>Contact</Link>
-                <Link href={"/"}>FAQ</Link>
-                <Link href={"/"}>Subscriptions</Link>
+                <Link href={"/dashboard"}>Dashboard</Link>
+                <Link href={"/dasboard/mydocs"}>My Documents</Link>
+                <Link href={"/dashboard/payments"}>Payments</Link>
+                <Link href={"/dashboard/mysubscriptions"}>Subscriptions</Link>
               </div>
             </div>
-            <div>
-              <HeroRedirect route="signin" title="Log in" styles="hidden md:block"/>
-              {/* <Button onClick={() => {
-                router.push('/signin')
-              }} className="hidden md:block bg-[#4A72FF] hover:bg-blue-500 shadow-md shadow-blue-600">
-                Log in
-              </Button> */}
+            <div className="hidden md:flex items-center space-x-4">
+              <NewClientDialog />
+              {/* <Avatar className="shadow-lg shadow-blue-500">
+                <AvatarImage src="https://github.com/shadcn.png" />
+                <AvatarFallback>CN</AvatarFallback>
+              </Avatar> */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Avatar className="shadow-lg shadow-blue-300 cursor-pointer">
+                    <AvatarImage src="" />
+                    <AvatarFallback>
+                      <Image width={30} height={20} src="https://res.cloudinary.com/dbowtoxfh/image/upload/v1749619558/profile-fallback.e7a6f788830c_xjyd8m.jpg" alt={""} />
+                    </AvatarFallback>
+                  </Avatar>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="mt-4">
+                  {/* <DropdownMenuLabel>Account</DropdownMenuLabel> */}
+                  <DropdownMenuItem onClick={() => {
+                    signOut()
+                    router.push('/signin')
+                    toast.success("You have successfully signed out", {
+                      duration: 6000,
+                      description: "You will be redirected to the sign-in page.",
+                    })
+
+                    }}>
+                    Sign Out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
             <div className="md:hidden flex items-center">
               <Button
@@ -100,7 +136,7 @@ function Navbar() {
           </div>
         )}
       </nav>
-    </> 
+    </>
   );
 }
 
