@@ -32,7 +32,7 @@ import { signIn } from "next-auth/react";
 
 export default function SignUpForm() {
   const [loading, setLoading] = useState(false);
-  const [googleLoading, setGoogleLoading] = useState(false);
+  // const [googleLoading, setGoogleLoading] = useState(false);
   const router = useRouter();
 
   const form = useForm<z.infer<typeof signUpSchema>>({
@@ -66,16 +66,16 @@ export default function SignUpForm() {
     }
   };
 
-  const handleGoogleSignUp = async () => {
-    setGoogleLoading(true);
-    try {
-      await handleGoogleSignUp( );
-    } catch (error) {
-      console.error("Google sign-up failed", error);
-      toast.error("Google sign-up failed");
-      setGoogleLoading(false);
-    }
-  };
+  // const handleGoogleSignUp = async () => {
+  //   setGoogleLoading(true);
+  //   try {
+  //     await handleGoogleSignUp( );
+  //   } catch (error) {
+  //     console.error("Google sign-up failed", error);
+  //     toast.error("Google sign-up failed");
+  //     setGoogleLoading(false);
+  //   }
+  // };
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4">

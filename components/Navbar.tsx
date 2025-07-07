@@ -4,14 +4,9 @@ import CloseIcon from "@mui/icons-material/Close";
 import MenuIcon from "@mui/icons-material/Menu";
 import Link from "next/link";
 import { useState } from "react";
-import { useRouter } from 'next/navigation'
-import { useSession } from "next-auth/react";
 import HeroRedirect from "./ui/HeroRedirect";
 function Navbar() {
-  const router = useRouter()
   const [isClick, setIsClick] = useState(false);
-  const  session  = useSession();
-  
 
   const toggleNavbar = () => {
     setIsClick(!isClick);

@@ -1,13 +1,11 @@
-
-import { auth } from '@/lib/auth';
-import Demo from './demo';
-import { SessionProvider } from 'next-auth/react';
-import Navbar from '@/components/UserNav';
 import Info from '@/components/dashboard/Info';
+import ListClient from '@/components/dashboard/ListClient';
+import { auth } from '@/lib/auth';
+import { SessionProvider } from 'next-auth/react';
 
 export default async function User() {
   const session = await auth();
-  console.log("session in page", session);
+  
   if (!session) {
     return (
       <div>
@@ -16,13 +14,12 @@ export default async function User() {
       </div>
     );
   }
-  return (
-    <SessionProvider>
-      <Navbar />
-      {/* <Demo /> */}
-      <Info />
-    </SessionProvider>
 
+  return (
+      <SessionProvider session={session}>
+        <Info />
+        <ListClient />
+      </SessionProvider>
   )
 }
 

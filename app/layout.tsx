@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/sonner";
 import type { Metadata } from "next";
 import { Source_Sans_3 } from "next/font/google";
 import "./globals.css";
-import RecoilContextProvider from "@/lib/RecoilProvider";
+import Providers from "@/lib/Provider";
 
 const sansFont = Source_Sans_3({
   weight: "500",
@@ -25,10 +25,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${sansFont.className} antialiased`}>
-        <RecoilContextProvider>
+        <Providers>
           {children}
           <Toaster richColors />
-        </RecoilContextProvider>
+        </Providers>
       </body>
     </html>
   );

@@ -24,7 +24,6 @@ import { toast } from "sonner";
 function Navbar() {
   const router = useRouter()
   const [isClick, setIsClick] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
 
   const toggleNavbar = () => {
     setIsClick(!isClick);
@@ -45,7 +44,7 @@ function Navbar() {
             <div className="hidden md:block">
               <div className="ml-4 flex items-center space-x-16">
                 <Link href={"/dashboard"}>Dashboard</Link>
-                <Link href={"/dasboard/mydocs"}>My Documents</Link>
+                <Link href={"/dashboard/mydocs"}>My Documents</Link>
                 <Link href={"/dashboard/payments"}>Payments</Link>
                 <Link href={"/dashboard/mysubscriptions"}>Subscriptions</Link>
               </div>
@@ -75,7 +74,7 @@ function Navbar() {
                       description: "You will be redirected to the sign-in page.",
                     })
 
-                    }}>
+                  }}>
                     Sign Out
                   </DropdownMenuItem>
                 </DropdownMenuContent>

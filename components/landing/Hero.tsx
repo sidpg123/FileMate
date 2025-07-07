@@ -1,6 +1,6 @@
 "use client";
 import ArrowCircleUpIcon from "@mui/icons-material/ArrowCircleUp";
-import { SessionProvider } from "next-auth/react";
+// import { SessionProvider } from "next-auth/react";
 import Image from "next/image";
 import Navbar from "../Navbar";
 import { Button } from "../ui/button";
@@ -10,9 +10,9 @@ function Hero() {
 
   return (
     <section className="min-h-screen">
-      <SessionProvider>
+      {/* <SessionProvider> */}
         <Navbar />
-      </SessionProvider>
+      {/* </SessionProvider> */}
       <div className="flex flex-col md:flex-row-reverse justify-center pt-14 md:pt-32 mx-auto md:max-w-[95%]">
         <div className="w-full mx-auto max-w-[80%] flex justify-center items-center px-6 sm:w-9/12 md:w-2/4 xl:w-[40%]">
           <Image
@@ -36,9 +36,9 @@ function Hero() {
             with your clients – secure, accessible, and hassle-free anytime.
           </h4>
           <div className="mt-6 flex flex-row">
-            <SessionProvider>
+            {/* <SessionProvider> */}
               <HeroRedirect route="signup" title="Register" styles="py-5 px-7 mr-3" extraComp={<ArrowCircleUpIcon className="rotate-90" />} />
-            </SessionProvider>
+            {/* </SessionProvider> */}
             <Button className="py-5 px-7 mx-auto text-[#4A72FF] bg-[#f1f1f3] hover:bg-[#f1eeeeee] shadow-md shadow-slate-300">
               Learn More
             </Button>
