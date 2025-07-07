@@ -1,6 +1,8 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 import { auth } from '@/lib/auth';
+import axios from 'axios';
+import { getSession } from "next-auth/react";
 
 // Add Razorpay type to the Window interface
 declare global {
@@ -57,7 +59,7 @@ export const checkOutHandler = async (amount: number, userId: string, plan: stri
 
   const expiresAt = getPlanExpiryDate(plan);
 
-  const data = await fetch("http://localhost:5000/api/v1/payment/getKey", {
+  const data = await fetch(`${process.env.API_SERVER_BASE_URL}/payment/getKey`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -65,10 +67,10 @@ export const checkOutHandler = async (amount: number, userId: string, plan: stri
     },
   });
   const dataJson = await data.json();
-  
+
   const key = dataJson.key;
 
-  const orderRes = await fetch("http://localhost:5000/api/v1/payment/checkout", {
+  const orderRes = await fetch(`${process.env.API_SERVER_BASE_URL}/payment/getKey`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -102,7 +104,7 @@ export const checkOutHandler = async (amount: number, userId: string, plan: stri
     order_id: order.id,
     callback_url: `${process.env.API_SERVER_BASE_URL}/payment/paymentverification`,
     prefill: {
-      name: "Siddharth" ,
+      name: "Siddharth",
       email: "gaurav.kumar@example.com",
       contact: "9999999999"
     },
@@ -113,9 +115,29 @@ export const checkOutHandler = async (amount: number, userId: string, plan: stri
       "color": "#121212"
     }
   }
-  console.log("windwo.razorpay",window.Razorpay);
+  console.log("window.Razorpay", window.Razorpay);
   const rzp = new window.Razorpay(options);
   rzp.open();
 
 }
 
+export const axiosInstance = axios.create({
+  baseURL: process.env.API_SERVER_BASE_URL
+});
+export const axiosClient = axios.create({
+  baseURL: process.env.API_SERVER_BASE_URL
+});
+
+axiosClient.interceptors.request.use(
+  async (config) => {
+    const session = await getSession();
+    const token = session?.accessToken;
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  }
+  , (error) => {
+    return Promise.reject(error);
+  }
+);
