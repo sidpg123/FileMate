@@ -10,15 +10,20 @@ import {
 import { useCurrentClient } from "@/store/store"
 import { Button } from "../ui/button"
 import { EditClientForm } from "./EditClientForm"
+import { useEffect } from "react"
 
 function EditClientDialog() {
-
+    const setEditClientDialogOpen = useCurrentClient((state) => state.setEditClientDialogOpen)
+    const open = useCurrentClient((state) => state.openEditClientDialog)
+    useEffect(() => {
+        setEditClientDialogOpen(false) // Ensure dialog is closed initially
+    }, [setEditClientDialogOpen]);
     return (
-        <Dialog>
+        <Dialog open={open} onOpenChange={setEditClientDialogOpen}>
             <DialogTrigger asChild >
                 <Button onClick={() => {
-                    ;
-                }} className="w-full sm:w-1/6 mt-3 sm:mt-0 bg-[#4A72FF] hover:bg-blue-500 shadow-md shadow-blue-500">
+                    setEditClientDialogOpen(true);
+                }} className="w-full sm:w-1/6 mt-3 sm:mt-0 bg-[#d1d8f0] hover:bg-blue-500 shadow-md shadow-gray-400 text-black hover:text-white font-semibold tracking-wider">
                     Edit Client
                 </Button>
             </DialogTrigger>
@@ -26,6 +31,7 @@ function EditClientDialog() {
                 <DialogHeader>
                     <DialogTitle>Edit Client Information</DialogTitle>
                     <EditClientForm />
+
                 </DialogHeader>
             </DialogContent>
         </Dialog>

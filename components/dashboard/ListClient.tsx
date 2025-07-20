@@ -38,7 +38,7 @@ function ListClient() {
         feeStatus,
         sortBy,
         sortOrder,
-        accessToken: session.data?.accessToken || ""
+        // accessToken: session.data?.accessToken || ""
       }),
     initialPageParam: null,
     getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
@@ -72,7 +72,7 @@ function ListClient() {
                   key={client.id}
                   name={client.name}
                   id={client.id}
-                  email={client.email}
+                  // email={client.email}
                   phoneNumber={client.phone}
                   pendingPayment={pendingAmount} // pass raw number here
                   status={client.status}

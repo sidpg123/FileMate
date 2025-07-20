@@ -1,6 +1,5 @@
 // import { useSession } from "next-auth/react";
-import { access } from "fs";
-import { axiosClient, axiosInstance } from "../utils";
+import { axiosClient } from "../utils";
 
 export const fetchClients = async ({
     pageParam,
@@ -9,7 +8,6 @@ export const fetchClients = async ({
     feeStatus,
     sortBy,
     sortOrder,
-    accessToken
 }: {
     pageParam?: { createdAt: string; id: string } | null;
     search?: string;
@@ -17,17 +15,10 @@ export const fetchClients = async ({
     feeStatus?: string;
     sortBy?: string;
     sortOrder?: string;
-    accessToken: string;
 }) => {
     console.log("sending Request to backend")
-    // const session =  useSession();
-    // console.log("Will it print?");
-    // console.log("session: ",session)
-    let count = 0;
-    if(search) count++;
-    console.log("count of search", count);
-    console.log("search is: ", search);
-    const res = await axiosInstance.get(`/clients`, {
+
+    const res = await axiosClient.get(`/clients`, {
         params: {
             cursorCreatedAt: pageParam?.createdAt,
             cursorId: pageParam?.id,
@@ -36,9 +27,6 @@ export const fetchClients = async ({
             feeStatus,
             sortBy,
             sortOrder,
-        },
-        headers: {
-            Authorization: `Bearer ${accessToken}`
         }
     })
     return res.data;
@@ -47,20 +35,16 @@ export const fetchClients = async ({
 
 export const fetchClientById = async ({
     clientId,
-    // accessToken
 }: {
     clientId: string;
-    // accessToken: string;
 }) => {
     const res = await axiosClient.get(`/clients/${clientId}`);
-    // console.log("fetchClientById response: ", res.data);
     return res.data;
 }
 
 export const editClientById = async ({
     clientId,
     data,
-    accessToken
 }: {
     clientId: string;
     data: {
@@ -72,5 +56,64 @@ export const editClientById = async ({
 }) => {
     const res = await axiosClient.put(`/clients/${clientId}`, data);
     console.log("editClientById response: ", res.data);
+    return res.data;
+}
+
+export const createClient = async ({
+    data,
+}: {
+    data: {
+        name: string;
+        email: string;
+        phone?: string;
+    };
+}) => {
+    const res = await axiosClient.post(`/clients`, data);
+
+    console.log("createClient response: ", res.data);
+    return res.data;
+}
+
+export const uploadDocMetaData = async ({
+    data
+}: {
+    data: {
+        clientId: string,
+        fileName: string,
+        fileKey: string,
+        year: string,
+        fileSize: number,
+        thumbnailKey: string
+    }
+}) => {
+    try {
+        const res = await axiosClient.post(`clients/document`, data);
+        console.log("response from uploadDocMetaData: ", res);     
+    } catch (error) {
+        console.error("Error occured while uploaing document metaData")
+    }
+    
+}
+
+export const fetchClientDocuments = async ({
+    pageParam,
+    search,
+    clientId,
+    year
+} : {
+    pageParam?: {uploadedAt: string; id: string } | null;
+    search?: string;
+    clientId: string;
+    year?: string;
+}) => {
+    const res = await axiosClient.get(`/clients/${clientId}/document`, {
+        params: {
+            cursorUploadedAt: pageParam?.uploadedAt,
+            cursorId: pageParam?.id,
+            search,
+            // clientId,
+            year
+        }
+    })
     return res.data;
 }

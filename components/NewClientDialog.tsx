@@ -10,11 +10,14 @@ import {
 
 import React from 'react'
 import { Button } from "./ui/button"
+import NewClientForm from "./NewClientForm"
+import { useNewUserFormStore } from "@/store/store"
 
 function NewClientDialog() {
-
+    const openNewUserDialog = useNewUserFormStore((state) => state.openNewUserDialog)
+    const setOpenNewUserDialog = useNewUserFormStore((state) => state.setOpenNewUserDialog)
     return (
-        <Dialog>
+        <Dialog open={openNewUserDialog} onOpenChange={setOpenNewUserDialog}>
             <DialogTrigger asChild >
                 <Button onClick={() => {;
                 }} className="hidden md:block bg-[#4A72FF] hover:bg-blue-500 shadow-lg shadow-blue-500">
@@ -23,12 +26,12 @@ function NewClientDialog() {
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Are you absolutely sure?</DialogTitle>
+                    <DialogTitle>New Client Form</DialogTitle>
                     <DialogDescription>
-                        This action cannot be undone. This will permanently delete your account
-                        and remove your data from our servers.
+                        Add details of the new client here. You can add more details later.
                     </DialogDescription>
                 </DialogHeader>
+                <NewClientForm />
             </DialogContent>
         </Dialog>
     )

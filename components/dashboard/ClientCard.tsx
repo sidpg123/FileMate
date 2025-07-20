@@ -8,11 +8,11 @@ interface clientCardProps {
     status: string,
     pendingPayment: string,
     phoneNumber: string,
-    email: string,
+    // email: string,
     id: string
 }
 
-const ClientCard: React.FC<clientCardProps> = ({ name, phoneNumber, email, status, pendingPayment, id }) => {
+const ClientCard: React.FC<clientCardProps> = ({ name, phoneNumber, status, pendingPayment, id }) => {
     const pendingPaymentNumber = Number(pendingPayment);
     const router = useRouter();
     return (

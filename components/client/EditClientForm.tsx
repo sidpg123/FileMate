@@ -19,12 +19,9 @@ import {
 import { Input } from "@/components/ui/input"
 import { useCurrentClient } from "@/store/store"
 import { useSession } from "next-auth/react"
+import { EditClientFormSchema, EditClientFormSchemaType } from "@/zodSchem/cleint.schemas"
 
-const formSchema = z.object({
-    name: z.string().min(1, "Name is required"),
-    email: z.string().email("Invalid email address"),
-    phone: z.string().optional(),
-})
+
 
 export function EditClientForm() {
     const session = useSession();
@@ -32,15 +29,14 @@ export function EditClientForm() {
     const name = useCurrentClient((state) => state.name);
     const email = useCurrentClient((state) => state.email);
     const phone = useCurrentClient((state) => state.phone);
-    // const accessToken = useAccessTokenStore((state) => state.accessToken);
     const clientId = useCurrentClient((state) => state.clientId);
-
+    const setEditClientDialogOpen = useCurrentClient((state) => state.setEditClientDialogOpen);
     const queryClient = useQueryClient();
 
 
 
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
+    const form = useForm<EditClientFormSchemaType>({
+        resolver: zodResolver(EditClientFormSchema),
         defaultValues: {
             name,
             email,
@@ -53,17 +49,18 @@ export function EditClientForm() {
         onSuccess: (data) => {
             console.log("Client updated successfully:", data)
             toast.success("Client updated successfully")
-            // Update the current client state with the new data
+            
+            queryClient.invalidateQueries({ queryKey: ['client', clientId] }) // Invalidate the query to refetch the updated client data
+            queryClient.invalidateQueries({ queryKey: ['clients'] }) // Invalidate the clients list query if needed
             useCurrentClient.setState({
                 name: data.name,
                 email: data.email,
                 phone: data.phone,
                 clientId: data.clientId, // Ensure clientId is also updated
             })
-
-            // queryClient.setQueryData(['client', clientId], data)
-            queryClient.invalidateQueries({ queryKey: ['client', clientId] }) // Invalidate the query to refetch the updated client data
-
+            setEditClientDialogOpen(false) // Close the dialog after successful submission
+            
+            form.reset() // Reset the form after successful submission
         },
         onError: (error) => {
             console.error("Error updating client:", error)
@@ -75,7 +72,7 @@ export function EditClientForm() {
 
     })
 
-    function onSubmit(values: z.infer<typeof formSchema>) {
+    function onSubmit(values: z.infer<typeof EditClientFormSchema>) {
         console.log("accesstoken", session.data?.accessToken);
         mutate({
             clientId: clientId, // Replace this

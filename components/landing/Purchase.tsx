@@ -3,11 +3,11 @@ import Script from 'next/script';
 import React from 'react'
 import Subscription from '../ui/Subscription';
 import { checkOutHandler } from '@/lib/utils';
-import { SessionProvider } from 'next-auth/react';
+// import { SessionProvider } from 'next-auth/react';
 
 function Purchase() {
     return (
-        <SessionProvider>
+        // <SessionProvider>
             
             <div className='pb-10'>
                 <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy={"afterInteractive"} />
@@ -61,7 +61,7 @@ function Purchase() {
 
 
             </div>
-        </SessionProvider>
+        // </SessionProvider>
     )
 }
 

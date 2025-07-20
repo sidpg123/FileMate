@@ -1,11 +1,11 @@
 import Info from '@/components/dashboard/Info';
 import ListClient from '@/components/dashboard/ListClient';
 import { auth } from '@/lib/auth';
-import { SessionProvider } from 'next-auth/react';
+// import { SessionProvider } from 'next-auth/react';
 
 export default async function User() {
   const session = await auth();
-  
+
   if (!session) {
     return (
       <div>
@@ -16,10 +16,12 @@ export default async function User() {
   }
 
   return (
-      <SessionProvider session={session}>
-        <Info />
-        <ListClient />
-      </SessionProvider>
+    // <SessionProvider session={session}>
+    <>
+      <Info />
+      <ListClient />
+    </>
+    // </SessionProvider>
   )
 }
 

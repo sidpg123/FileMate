@@ -1,10 +1,12 @@
 "use client"
 import { Progress } from "@/components/ui/progress";
 import { getUserInfo } from "@/lib/api/user";
+import { useUserDetailsStore } from "@/store/store";
 // import { getUserInfo } from '@/lib/user';
 import { UserInfoResponse } from '@/types/api/user';
 import { useQuery } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
+import { useEffect } from "react";
 import { toast } from "sonner";
 function Info() {
     const session = useSession();
@@ -13,9 +15,22 @@ function Info() {
         ?.toLowerCase()
         .replace(/^\w/, c => c.toUpperCase());
 
+    const setName = useUserDetailsStore((state) => state.setName);
+    const setEmail = useUserDetailsStore((state) => state.setEmail);
+    const setId = useUserDetailsStore((state) => state.setId);
+
+    useEffect(() => {
+        if(session.data) {
+            setName(session.data.user.name || "");
+            setEmail(session.data.user.email || "");
+            setId(session.data.user.id || "");
+        }
+        console.log("user data stored in Zustand"); 
+    },[session.data?.user?.id]);
+
     const { data, error } = useQuery<UserInfoResponse>({
         queryKey: ["userInfo"],
-        queryFn: async () => getUserInfo(session.data?.accessToken as string)
+        queryFn: async () => getUserInfo()
     })
     // console.log(error)
     console.log("info rendered");
