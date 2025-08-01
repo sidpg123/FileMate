@@ -52,7 +52,7 @@ export const editClientById = async ({
         email?: string;
         phone?: string;
     };
-    accessToken: string;
+    // accessToken: string;
 }) => {
     const res = await axiosClient.put(`/clients/${clientId}`, data);
     console.log("editClientById response: ", res.data);

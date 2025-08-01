@@ -70,7 +70,7 @@ export const checkOutHandler = async (amount: number, userId: string, plan: stri
 
   const key = dataJson.key;
 
-  const orderRes = await fetch(`${process.env.API_SERVER_BASE_URL}/payment/getKey`, {
+  const orderRes = await fetch(`${process.env.API_SERVER_BASE_URL}/payment/checkout`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -141,3 +141,23 @@ axiosClient.interceptors.request.use(
     return Promise.reject(error);
   }
 );
+
+export function formatBytes(bytes: number | bigint, decimals = 2): string {
+  if (bytes === 0) return '0 Bytes';
+
+  const k = 1024;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+
+  const b = typeof bytes === 'bigint' ? Number(bytes) : bytes;
+  const i = Math.floor(Math.log(b) / Math.log(k));
+
+  const value = b / Math.pow(k, i);
+  return `${value.toFixed(decimals)} ${sizes[i]}`;
+}
+
+
+export function extractS3Key(cloudfrontUrl: string) {
+  const url = new URL(cloudfrontUrl);
+  const path = url.pathname; // gets '/path/to/object.jpg'
+  return decodeURIComponent(path.slice(1)); // remove leading '/' and decode
+}

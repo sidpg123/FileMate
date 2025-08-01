@@ -23,7 +23,7 @@ function EditClientDialog() {
             <DialogTrigger asChild >
                 <Button onClick={() => {
                     setEditClientDialogOpen(true);
-                }} className="w-full sm:w-1/6 mt-3 sm:mt-0 bg-[#d1d8f0] hover:bg-blue-500 shadow-md shadow-gray-400 text-black hover:text-white font-semibold tracking-wider">
+                }} className="w-full md:w-1/6 mt-3 sm:mt-0 bg-[#d1d8f0] hover:bg-blue-500 shadow-md shadow-gray-400 text-black hover:text-white font-semibold tracking-wider">
                     Edit Client
                 </Button>
             </DialogTrigger>

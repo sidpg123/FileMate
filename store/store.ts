@@ -32,11 +32,21 @@ interface newUserFormStore {
     setPhone: (phone: string) => void;
 }
 
-interface uploadDocStore {
+interface CurrentFileStore {
     year: string;
-    openUploadDocDialog: boolean;
+    name: string;
+    key: string;
+    fileId: string;
+    openUpdateFileDialog: boolean;
+    openDeleteFileDialog: boolean;
+    openFileMenuDropdown: boolean;
+    setFileId: (fileId: string) => void;
+    setKey: (key: string) => void;
     setYear: (year: string) => void;
-    setOpenUploadDocDialog: (open: boolean) => void;
+    setName: (name: string) => void;
+    setOpenFileMenuDropdown: (openMenu: boolean) => void;
+    setOpenUpdateFileDialog: (open: boolean) => void;
+    setOpenDeleteFileDialog: (open: boolean) => void;
 }
 
 interface UserDetails {
@@ -47,6 +57,7 @@ interface UserDetails {
     setName: (name: string) => void;
     setEmail: (email: string) => void;
 }
+
 
 export const useUserDetailsStore = create<UserDetails>((set) => ({
     id: '',
@@ -111,5 +122,36 @@ export const useCurrentClient = create<currentClientStore>((set) => ({
     },
     setPendingFees(pendingFees) {
         set(() => ({ pendingFees }))
+    },
+}));
+
+export const useCurrentFileStore = create<CurrentFileStore>((set) => ({
+    year: '',
+    name: '',
+    key: '',
+    fileId: '',
+    openUpdateFileDialog: false,
+    openDeleteFileDialog: false,
+    openFileMenuDropdown: false,
+    setFileId(fileId) {
+        set(() => ({ fileId}));
+    },
+    setKey(key) {
+        set(() => ({ key }));
+    },
+    setName(name) {
+        set(() => ({ name }));
+    },
+    setYear(year) {
+        set(() => ({ year }));
+    },
+    setOpenUpdateFileDialog(open) {
+        set(() => ({ openUpdateFileDialog: open }));
+    },
+    setOpenDeleteFileDialog(open) {
+        set(() => ({ openDeleteFileDialog: open }));
+    },
+    setOpenFileMenuDropdown(open) {
+        set(() => ({ openFileMenuDropdown: open }));
     },
 }));

@@ -77,7 +77,7 @@ export function EditClientForm() {
         mutate({
             clientId: clientId, // Replace this
             data: values,
-            accessToken: `${session.data?.accessToken}`,
+            // accessToken: `${session.data?.accessToken}`,
         })
     }
 
