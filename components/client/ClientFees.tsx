@@ -5,15 +5,39 @@ import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
 import { Badge } from '../ui/badge'
-import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useDebounce } from '@/hooks/useDebounce'
 import { fetchClientFees, createFee, updateFee } from '@/lib/api/fees'
 import CreateFeeDialog from './CreateFeeDialog'
 import EditFeeDialog from './EditFeeDialog'
-import { Calendar, DollarSign, Edit, FileText, IndianRupee, IndianRupeeIcon, TrendingUp } from 'lucide-react'
+import { Calendar, DollarSign, Edit, FileText, Filter, IndianRupee, IndianRupeeIcon, Search, TrendingUp, X } from 'lucide-react'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { fetchFeesCategories } from '@/lib/api/user'
+import DeleteFeesDialogue from './DeleteFeesDealogue'
+
 
 type FeeStatus = 'Pending' | 'Paid' | 'Overdue'
 type FeeFilter = 'all' | 'pending' | 'paid'
+
+interface FeesCategory {
+  id: string
+  name: string
+  description?: string
+  createdAt?: string
+  updatedAt?: string
+  userId?: string
+}
+interface FeesCategoryData {
+  success: string
+  data: FeesCategory[]
+}
 
 interface Fee {
   id: string
@@ -24,6 +48,11 @@ interface Fee {
   status: FeeStatus
   createdAt: string
   paymentDate?: string
+  feeCategoryId: string
+  feeCategory?: {
+    id: string
+    name: string
+  }
 }
 
 const groupFeesByStatus = (fees: Fee[]) => {
@@ -32,11 +61,11 @@ const groupFeesByStatus = (fees: Fee[]) => {
     Paid: [],
     Overdue: []
   }
-  
+
   fees.forEach(fee => {
     grouped[fee.status].push(fee)
   })
-  
+
   return grouped
 }
 
@@ -47,7 +76,7 @@ const calculateSummary = (fees: Fee[]) => {
     totalOverdue: 0,
     totalFees: fees.length
   }
-  
+
   fees.forEach(fee => {
     if (fee.status === 'Paid') {
       summary.totalReceived += fee.amount
@@ -57,7 +86,7 @@ const calculateSummary = (fees: Fee[]) => {
       summary.totalOverdue += fee.amount
     }
   })
-  
+
   return summary
 }
 
@@ -98,9 +127,18 @@ export default function ClientFees({
   const [filter, setFilter] = useState<FeeFilter>('all')
   const [editingFee, setEditingFee] = useState<Fee | null>(null)
   const [showCreateDialog, setShowCreateDialog] = useState(false)
-  
+  const [selectedCategory, setSelectedCategory] = useState('')
+
   const debouncedSearch = useDebounce(search, 500)
   const queryClient = useQueryClient()
+
+  const { data: feesCategoriesData, isLoading: categoriesLoading } = useQuery<FeesCategoryData>({
+    queryKey: ["feesCategories"],
+    queryFn: fetchFeesCategories,
+    refetchOnWindowFocus: false
+  })
+
+  const feesCategories = feesCategoriesData?.data;
 
   const {
     data,
@@ -110,31 +148,47 @@ export default function ClientFees({
     isFetchingNextPage,
     status: queryStatus
   } = useInfiniteQuery({
-    queryKey: ["fees", clientId, debouncedSearch, filter],
-    queryFn: ({ pageParam = null }) =>
+    queryKey: ["fees", clientId, debouncedSearch, filter, selectedCategory],
+    queryFn: ({ pageParam }) =>
       fetchClientFees({
         pageParam,
         search: debouncedSearch,
         filter,
-        clientId
+        clientId,
+        feeCategoryId: selectedCategory
       }),
     initialPageParam: null,
     refetchOnWindowFocus: false,
-    getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined
+    getNextPageParam: (lastPage) => {
+      return lastPage.hasMore ? lastPage.nextCursor : undefined;
+    }
   })
-
+  // console.log("Fees Categories Data: ", feesCategories)
   const allFees = data?.pages.flatMap((group) => group.data) || []
   const groupedFees = groupFeesByStatus(allFees)
   const summary = calculateSummary(allFees)
 
-  const filteredFees = filter === 'all' 
-    ? allFees 
-    : filter === 'pending' 
+  const getCategoryName = (categoryId: string) => {
+    return feesCategories?.find(cat => cat.id === categoryId)?.name || 'Unknown Category'
+  }
+
+  const clearFilters = () => {
+    setSearch('')
+    setFilter('all')
+    setSelectedCategory('')
+  }
+
+  const hasActiveFilters = search || filter !== 'all' || selectedCategory
+
+  const filteredFees = filter === 'all'
+    ? allFees
+    : filter === 'pending'
       ? [...groupedFees.Pending, ...groupedFees.Overdue]
       : groupedFees.Paid
 
+  console.log("Fees  Data: ", filteredFees)
   return (
-    <>
+    <div className=" space-y-6 pb-8">
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6 mt-10">
         <Card className="shadow-lg">
@@ -195,128 +249,281 @@ export default function ClientFees({
       </div>
 
       {/* Controls */}
-      <div className="container shadow-lg p-3 mb-5 bg-body rounded">
-        <div className="flex md:flex-row flex-col gap-3 justify-between items-center">
-          <Button 
-            onClick={() => setShowCreateDialog(true)}
-            className="bg-green-500 text-white hover:bg-green-600 shadow-lg shadow-green-500"
-          >
-            Create New Fee
-          </Button>
+      <Card className="border-0 shadow-lg mb-6">
+        <CardContent className="p-6">
+          <div className="space-y-4">
+            {/* Top Row - Create Button and Active Filters */}
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+              <Button
+                onClick={() => setShowCreateDialog(true)}
+                className="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white hover:from-emerald-600 hover:to-emerald-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+              >
+                <IndianRupeeIcon className="h-4 w-4 mr-2" />
+                Create New Fee
+              </Button>
 
-          <Input 
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full md:w-2/5 shadow-md shadow-blue-500" 
-            placeholder="Search by note or amount..."
-          />
+              {hasActiveFilters && (
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-slate-600">Filters active:</span>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={clearFilters}
+                    className="h-8 px-3 text-xs hover:bg-slate-50"
+                  >
+                    <X className="h-3 w-3 mr-1" />
+                    Clear All
+                  </Button>
+                </div>
+              )}
+            </div>
 
-          <div className="flex gap-2">
-            <Button
-              variant={filter === 'all' ? 'default' : 'outline'}
-              onClick={() => setFilter('all')}
-              className={filter === 'all' ? 'bg-blue-500 hover:bg-blue-600' : ''}
-            >
-              All
-            </Button>
-            <Button
-              variant={filter === 'pending' ? 'default' : 'outline'}
-              onClick={() => setFilter('pending')}
-              className={filter === 'pending' ? 'bg-yellow-500 hover:bg-yellow-600' : ''}
-            >
-              Pending
-            </Button>
-            <Button
-              variant={filter === 'paid' ? 'default' : 'outline'}
-              onClick={() => setFilter('paid')}
-              className={filter === 'paid' ? 'bg-green-500 hover:bg-green-600' : ''}
-            >
-              Paid
-            </Button>
+            {/* Second Row - Search and Filters */}
+            <div className="flex flex-col lg:flex-row gap-4">
+              {/* Search Input */}
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4" />
+                <Input
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="pl-10 shadow-sm border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+                  placeholder="Search by note, amount..."
+                />
+                {search && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setSearch('')}
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 h-6 w-6 p-0 hover:bg-slate-100"
+                  >
+                    <X className="h-3 w-3" />
+                  </Button>
+                )}
+              </div>
+
+              {/* Category Filter */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={`min-w-[160px] justify-between shadow-sm border-slate-200 hover:bg-slate-50 ${selectedCategory ? 'bg-blue-50 border-blue-200 text-blue-700' : ''
+                      }`}
+                  >
+                    <div className="flex items-center gap-2">
+                      <Filter className="h-4 w-4" />
+                      {selectedCategory
+                        ? getCategoryName(selectedCategory)
+                        : 'All Categories'
+                      }
+                    </div>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuLabel>Filter by Category</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    onClick={() => setSelectedCategory('')}
+                    className={selectedCategory === '' ? 'bg-blue-50 text-blue-700' : ''}
+                  >
+                    All Categories
+                  </DropdownMenuItem>
+                  {categoriesLoading ? (
+                    <DropdownMenuItem disabled>Loading categories...</DropdownMenuItem>
+                  ) : (
+                    feesCategories?.map((category) => (
+                      <DropdownMenuItem
+                        key={category.id}
+                        onClick={() => setSelectedCategory(category.id)}
+                        className={selectedCategory === category.id ? 'bg-blue-50 text-blue-700' : ''}
+                      >
+                        {category.name}
+                        {category.description && (
+                          <span className="text-xs text-slate-500 ml-2">
+                            ({category.description})
+                          </span>
+                        )}
+                      </DropdownMenuItem>
+                    ))
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              {/* Status Filter Buttons */}
+              <div className="flex gap-2 items-center justify-center">
+                <Button
+                  variant={filter === 'all' ? 'default' : 'outline'}
+                  onClick={() => setFilter('all')}
+                  className={`transition-all duration-200 px-5 ${filter === 'all'
+                    ? 'bg-slate-800 hover:bg-slate-900 shadow-md'
+                    : 'hover:bg-slate-50 border-slate-200'
+                    }`}
+                  size="sm"
+                >
+                  All
+                </Button>
+                <Button
+                  variant={filter === 'pending' ? 'default' : 'outline'}
+                  onClick={() => setFilter('pending')}
+                  className={`transition-all duration-200 px-5 ${filter === 'pending'
+                    ? 'bg-amber-500 hover:bg-amber-600 shadow-md'
+                    : 'hover:bg-amber-50 border-amber-200 text-amber-700'
+                    }`}
+                  size="sm"
+                >
+                  Pending
+                </Button>
+                <Button
+                  variant={filter === 'paid' ? 'default' : 'outline'}
+                  onClick={() => setFilter('paid')}
+                  className={`transition-all duration-200 px-5 ${filter === 'paid'
+                    ? 'bg-emerald-500 hover:bg-emerald-600 shadow-md'
+                    : 'hover:bg-emerald-50 border-emerald-200 text-emerald-700'
+                    }`}
+                  size="sm"
+                >
+                  Paid
+                </Button>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
 
       {/* Fees Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredFees.map((fee) => (
-          <Card key={fee.id} className="shadow-lg hover:shadow-xl transition-shadow">
-            <CardHeader className="pb-3">
-              <div className="flex justify-between items-start">
-                <CardTitle className="text-lg font-bold text-gray-800">
-                  {formatCurrency(fee.amount)}
-                </CardTitle>
-                <Badge className={getStatusColor(fee.status)}>
-                  {fee.status}
-                </Badge>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="flex items-center gap-2 text-sm text-gray-600">
-                <Calendar className="h-4 w-4" />
-                <span>Due: {formatDate(fee.dueDate)}</span>
-              </div>
-              
-              {fee.paymentDate && (
-                <div className="flex items-center gap-2 text-sm text-green-600">
-                  <Calendar className="h-4 w-4" />
-                  <span>Paid: {formatDate(fee.paymentDate)}</span>
+      {filteredFees.length === 0 ? (
+        <Card className="border-0 shadow-lg">
+          <CardContent className="flex flex-col items-center justify-center py-12">
+            <FileText className="h-12 w-12 text-slate-400 mb-4" />
+            <h3 className="text-lg font-medium text-slate-600 mb-2">No fees found</h3>
+            <p className="text-slate-500 text-center">
+              {hasActiveFilters
+                ? "Try adjusting your filters or search terms"
+                : "Create your first fee to get started"
+              }
+            </p>
+            {hasActiveFilters && (
+              <Button
+                variant="outline"
+                onClick={clearFilters}
+                className="mt-4"
+              >
+                Clear Filters
+              </Button>
+            )}
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+          {filteredFees.map((fee) => (
+            <Card
+              key={fee.id}
+              className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 overflow-hidden"
+            >
+              <CardHeader className="pb-3 bg-gradient-to-r from-slate-50 to-slate-100">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <CardTitle className="text-xl font-bold text-slate-800">
+                      {formatCurrency(fee.amount)}
+                    </CardTitle>
+
+                    {fee.feeCategory && (
+                      <p className="text-sm text-slate-600 mt-1">
+                        {/* {getCategoryName(fee.feeCategory.id)} */}
+                        Category: {fee.feeCategory.name}
+                      </p>
+                    )}
+                  </div>
+                  <div className='flex items-center gap-2'>
+                    <Badge className={getStatusColor(fee.status)}>
+                      {fee.status}
+                    </Badge>
+                    <DeleteFeesDialogue 
+                      feeId={fee.id}
+                       clientId={clientId}
+                    />
+                  </div>
                 </div>
-              )}
-              
-              {fee.note && (
-                <div className="text-sm text-gray-600">
-                  <span className="font-medium">Note: </span>
-                  {fee.note}
+              </CardHeader>
+              <CardContent className="space-y-4 mt-2 ">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-sm text-slate-600">
+                    <Calendar className="h-4 w-4" />
+                    <span>Due: {formatDate(fee.dueDate)}</span>
+                  </div>
                 </div>
-              )}
-              
-              <div className="text-xs text-gray-500">
-                Created: {formatDate(fee.createdAt)}
-              </div>
-              
-              <div className="pt-2">
+
+                {fee.paymentDate && (
+                  <div className="flex items-center gap-2 text-sm text-emerald-600 bg-emerald-50 px-3 py-2 rounded-lg">
+                    <Calendar className="h-4 w-4" />
+                    <span>Paid: {formatDate(fee.paymentDate)}</span>
+                  </div>
+                )}
+
+                {fee.note && (
+                  <div className="text-sm text-slate-600 bg-slate-50 p-3 rounded-lg">
+                    <span className="font-medium">Note: </span>
+                    {fee.note}
+                  </div>
+                )}
+
+                <div className="text-xs text-slate-500 pt-2 border-t border-slate-100">
+                  Created: {formatDate(fee.createdAt)}
+                </div>
+
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => setEditingFee(fee)}
-                  className="w-full hover:bg-blue-50 hover:border-blue-300"
+                  className="w-full hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700 transition-all duration-200"
                 >
                   <Edit className="h-4 w-4 mr-2" />
                   Edit Fee
                 </Button>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
 
-      {/* Load More */}
+      {/* Enhanced Load More */}
       {hasNextPage && (
-        <div className="mt-6 text-center">
+        <div className="text-center">
           <Button
             onClick={() => fetchNextPage()}
             disabled={isFetchingNextPage}
-            className="bg-blue-500 text-white hover:bg-blue-600"
+            variant="outline"
+            className="bg-white hover:bg-slate-50 shadow-lg border-slate-200"
           >
-            {isFetchingNextPage ? "Loading more..." : "Load More"}
+            {isFetchingNextPage ? (
+              <>
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-slate-800 mr-2"></div>
+                Loading more...
+              </>
+            ) : (
+              "Load More Fees"
+            )}
           </Button>
         </div>
       )}
 
       {/* Dialogs */}
-      <CreateFeeDialog
-        clientId={clientId}
-        open={showCreateDialog}
-        onOpenChange={setShowCreateDialog}
-      />
+      {showCreateDialog && (
+        <CreateFeeDialog
+          clientId={clientId}
+          open={showCreateDialog}
+          onOpenChange={setShowCreateDialog}
+        />
+      )}
+
 
       {editingFee && (
         <EditFeeDialog
+          clientId={clientId}
           fee={editingFee}
           open={!!editingFee}
           onOpenChange={(open) => !open && setEditingFee(null)}
         />
       )}
-    </>
+    </div>
   )
 }

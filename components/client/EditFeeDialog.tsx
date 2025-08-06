@@ -13,10 +13,12 @@ import { Input } from '../ui/input'
 import { Label } from '../ui/label'
 import { Textarea } from '../ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { updateFee } from '@/lib/api/fees'
 import { toast } from 'sonner'
 import { Loader2 } from 'lucide-react'
+import CategorySelector from './SelectCategory'
+import { createFeesCategory, fetchFeesCategories } from '@/lib/api/user'
 
 interface Fee {
   id: string
@@ -27,28 +29,58 @@ interface Fee {
   status: 'Pending' | 'Paid' | 'Overdue'
   createdAt: string
   paymentDate?: string
+  feeCategoryId: string
+  feeCategory?: {
+    id: string
+    name: string
+  }
+}
+
+interface FeeCategory {
+  id: string
+  name: string
+  description?: string
+  createdAt?: string
+  updatedAt?: string
+  userId?: string
 }
 
 interface EditFeeDialogProps {
   fee: Fee
   open: boolean
+  clientId: string
   onOpenChange: (open: boolean) => void
 }
+
+
+
 
 export default function EditFeeDialog({
   fee,
   open,
+  clientId,
   onOpenChange
 }: EditFeeDialogProps) {
+  
   const [formData, setFormData] = useState({
     amount: '',
     dueDate: '',
     note: '',
-    status: 'Pending' as 'Pending' | 'Paid' ,
-    paymentDate: ''
+    status: 'Pending' as 'Pending' | 'Paid',
+    paymentDate: '',
+    feeCategory: {
+      id: '',
+      name: ''
+    }
   })
 
   const queryClient = useQueryClient()
+
+  const { data: feesCategories, isLoading: categoriesLoading } = useQuery({
+  queryKey: ["feesCategories"],
+  queryFn: fetchFeesCategories,
+  refetchOnWindowFocus: false
+})
 
   // Initialize form data when fee changes
   useEffect(() => {
@@ -58,7 +90,12 @@ export default function EditFeeDialog({
         dueDate: fee.dueDate.split('T')[0], // Format date for input
         note: fee.note || '',
         status: fee.status === 'Overdue' ? 'Pending' : fee.status,
-        paymentDate: fee.paymentDate ? fee.paymentDate.split('T')[0] : ''
+        paymentDate: fee.paymentDate ? fee.paymentDate.split('T')[0] : '',
+        // feeCategoryId: fee.feeCategoryId || ''
+        feeCategory: {
+          id: fee.feeCategory?.id || '',
+          name: fee.feeCategory?.name || ''
+        }
       })
     }
   }, [fee])
@@ -78,6 +115,17 @@ export default function EditFeeDialog({
     }
   })
 
+  const createCategoryMutation = useMutation({
+    mutationFn: createFeesCategory,
+    onSuccess: (newCategory) => {
+      queryClient.invalidateQueries({ queryKey: ['feesCategories'] })
+      toast.success('Category created successfully!')
+    },
+    onError: (error: any) => {
+      toast.error(error?.message || 'Failed to create category')
+    }
+  })
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
 
@@ -87,12 +135,13 @@ export default function EditFeeDialog({
     }
 
     const submitData = {
-      clientId: fee.clientId, // Add clientId from fee object
+      clientId: clientId, // Add clientId from fee object
       feeId: fee.id,
       amount: parseFloat(formData.amount),
       dueDate: formData.dueDate,
       note: formData.note || undefined,
       status: formData.status,
+      feeCategoryId: formData.feeCategory.id, // Assuming fee object has feeCategoryId
       // Set payment date if status is changed to Paid and there wasn't one before
       paymentDate:
         formData.status === 'Paid'
@@ -110,6 +159,50 @@ export default function EditFeeDialog({
       ...prev,
       [field]: value
     }))
+  }
+
+const handleCategorySelect = (category: { id: string, name: string }) => {
+  setFormData(prev => ({
+    ...prev,
+    feeCategory: {
+      id: category.id,
+      name: category.name
+    }
+  }))
+}
+
+
+  const handleAddCategory = async (name: string): Promise<FeeCategory> => {
+    try {
+      // Use mutateAsync for easier async handling
+      const result = await createCategoryMutation.mutateAsync({ name })
+
+      // If the API returns the created category, use it
+      if (result) {
+        return result as FeeCategory
+      }
+
+      // If API doesn't return the category, refetch and find it
+      await queryClient.invalidateQueries({ queryKey: ['feesCategories'] })
+      const updatedCategories = queryClient.getQueryData(['feesCategories']) as { data: FeeCategory[] }
+      const createdCategory = updatedCategories?.data?.find(cat => cat.name === name)
+
+      if (createdCategory) {
+        return createdCategory
+      }
+
+      // Fallback: create a temporary category object
+      return {
+        id: Date.now().toString(), // temporary ID
+        name,
+        description: '',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        userId: ''
+      }
+    } catch (error) {
+      throw error
+    }
   }
 
   return (
@@ -163,6 +256,19 @@ export default function EditFeeDialog({
                 {/* <SelectItem value="Overdue">Overdue</SelectItem> */}
               </SelectContent>
             </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label>Category *</Label>
+
+            <CategorySelector
+
+              onCategorySelect={handleCategorySelect}
+              categories={feesCategories ?? []}
+              handleAddCategory={handleAddCategory}
+              selectedCategory={formData.feeCategory}
+            />
+
           </div>
 
           <div className="space-y-2">

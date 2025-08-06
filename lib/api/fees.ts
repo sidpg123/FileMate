@@ -6,10 +6,14 @@ import { axiosClient } from "../utils"
 // import { axiosClient } from './axiosClient'; // Adjust import path as needed
 
 interface FetchClientFeesParams {
-  pageParam: string | null
+  pageParam?: {
+    cursorId?: string
+    cursorCreatedAt?: string
+  } | null
   search: string
   filter: 'all' | 'pending' | 'paid'
-  clientId: string
+  clientId: string,
+  feeCategoryId?: string // Optional for filtering by category
 }
 
 interface CreateFeeData {
@@ -19,6 +23,7 @@ interface CreateFeeData {
   note?: string
   status: 'Pending' | 'Paid' | 'Overdue'
   paymentDate?: string
+  feeCategoryId?: string
 }
 
 interface UpdateFeeData {
@@ -29,42 +34,49 @@ interface UpdateFeeData {
   note?: string
   status: 'Pending' | 'Paid' | 'Overdue'
   paymentDate?: string
+  feeCategoryId: string
 }
 
 export const fetchClientFees = async ({
   pageParam,
   search,
   filter,
-  clientId
+  clientId,
+  feeCategoryId
 }: FetchClientFeesParams) => {
   const params: Record<string, string> = {
     limit: '10'
-  }
-  
-  if (pageParam) params.cursor = pageParam
-  if (search) params.search = search
-  if (filter && filter !== 'all') params.status = filter
+  };
 
-  const res = await axiosClient.get(`/clients/${clientId}/fees`, {
-    params
-  })
-  
-  // Transform response to match expected format
-  return {
-    data: res.data.feeRecord || res.data.data || [],
-    nextCursor: res.data.nextCursor,
-    hasMore: res.data.hasMore,
-    summary: res.data.summary
+  if (pageParam?.cursorId && pageParam?.cursorCreatedAt) {
+    params.cursorId = pageParam.cursorId;
+    params.cursorCreatedAt = pageParam.cursorCreatedAt;
   }
-}
+
+  if (search) params.search = search;
+  if (feeCategoryId) params.feeCategoryId = feeCategoryId;
+  if (clientId) params.clientId = clientId;
+  if (filter && filter !== 'all') params.status = filter;
+
+  const res = await axiosClient.get(`/clients/${clientId}/fees`, { params });
+
+  return {
+    data: res.data.data || [],
+    nextCursor: res.data.nextCursor || null,
+    hasMore: res.data.hasMore || false,
+    summary: res.data.summary || null
+  };
+};
 
 export const createFee = async (data: CreateFeeData) => {
+  console.log("Creating Fee with data:", data)
   const res = await axiosClient.post(`/clients/${data.clientId}/fees`, {
     amount: data.amount,
     dueDate: data.dueDate,
     note: data.note,
     status: data.status,
-    paymentDate: data.paymentDate
+    paymentDate: data.paymentDate,
+    feeCategoryId: data.feeCategoryId
   })
 
   return res.data.feeRecord || res.data.data
@@ -76,16 +88,18 @@ export const updateFee = async (data: UpdateFeeData) => {
     dueDate: data.dueDate,
     note: data.note,
     status: data.status,
-    paymentDate: data.paymentDate
+    paymentDate: data.paymentDate,
+    feeCategoryId: data.feeCategoryId
   })
 
   return res.data.feeRecord || res.data.data
 }
 
-export const deleteFee = async (clientId: string, feeId: string) => {
+export const deleteFee = async ({ clientId, feeId }: { clientId: string; feeId: string }) => {
   const res = await axiosClient.delete(`/clients/${clientId}/fees/${feeId}`)
   return res.data
 }
+
 
 export const getFeeStatistics = async (clientId: string) => {
   const res = await axiosClient.get(`/clients/${clientId}/fees/statistics`)

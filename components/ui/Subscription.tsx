@@ -65,6 +65,11 @@ export default function Subscription({
                 <Button
                     variant={"outline"}
                     onClick={() => {
+                        if(amount.value === 0) {
+                            // If the amount is 0, redirect to signup
+                            router.push("/signup");
+                            return;
+                        }
                         if (!userId || !accessToken) {
                             toast.warning("Please log in to purchase a plan.");
                             router.push("/signin"); // or "/auth/login" based on your route

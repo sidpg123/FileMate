@@ -8,6 +8,7 @@ import { Input } from '../ui/input'
 import ClientFees from './ClientFees'
 import DocCard from './DocCard'
 import UploadDialog from './UploadDialog'
+import { File, User } from 'lucide-react'
 
 const groupByYear = (docs: any[]) => {
     const grouped: Record<string, any[]> = {};
@@ -31,6 +32,7 @@ export default function ClientDocs({
     const [year, setYear] = useState("");
 
     const debounceSearch = useDebounce(search, 500);
+    const debounceYear = useDebounce(year, 500);
 
     const {
         data,
@@ -40,12 +42,12 @@ export default function ClientDocs({
         isFetchingNextPage,
         status: queryStatus
     } = useInfiniteQuery({
-        queryKey: ["documents", clientId, debounceSearch, year],
+        queryKey: ["documents", clientId, debounceSearch, debounceYear],
         queryFn: ({ pageParam = null }) =>
             fetchClientDocuments({
                 pageParam,
                 search: debounceSearch,
-                year,
+                year: debounceYear,
                 clientId
             }),
         initialPageParam: null,
@@ -63,21 +65,31 @@ export default function ClientDocs({
                 <ClientFees clientId={clientId} />
             ) : (
                 <>
-                    {/* Enhanced Search and Upload Section */}
-                    <div className='container mx-auto px-4 mt-8 mb-8'>
-                        <div className='bg-gradient-to-r from-slate-50 to-gray-50 rounded-2xl shadow-lg border border-gray-200 p-6'>
-                            <div className='flex md:flex-row flex-col gap-4 justify-between items-center'>
-                                <div className="relative flex-1 max-w-md">
-                                    <Input 
-                                        onChange={(e) => setSearch(e.target.value)} 
-                                        className='w-full h-12 pl-4 pr-4 border-2 border-gray-200 rounded-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all duration-200 bg-white shadow-sm' 
-                                        placeholder='Search documents...' 
+                    {/* Search and Upload Section */}
+                    <div className="container mx-auto px-4 mt-8 mb-8">
+                        <div className="bg-gradient-to-r from-slate-50 to-gray-50 rounded-2xl shadow-lg border border-gray-200 p-6">
+                            <div className="flex flex-col md:flex-row gap-4 md:justify-between md:items-center">
+                                <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto flex-1">
+                                    <Input
+                                        onChange={(e) => setSearch(e.target.value)}
+                                        className="flex-1 min-w-[200px] h-12 pl-4 pr-4 border-2 border-gray-200 rounded-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all duration-200 bg-white shadow-sm"
+                                        placeholder="Search documents..."
+                                    />
+
+                                    <Input
+                                        onChange={(e) => setYear(e.target.value)}
+                                        className="flex-1 min-w-[150px] h-12 pl-4 pr-4 border-2 border-gray-200 rounded-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all duration-200 bg-white shadow-sm"
+                                        placeholder="Filter by year. Eg. 2023-24"
                                     />
                                 </div>
-                                <UploadDialog />
+
+                                <div className="w-full sm:w-auto mt-4 md:mt-0 flex justify-center">
+                                    <UploadDialog />
+                                </div>
                             </div>
                         </div>
                     </div>
+
 
                     {/* Documents Grid with Improved Layout */}
                     <div className="container mx-auto px-4 space-y-12">
@@ -93,7 +105,7 @@ export default function ClientDocs({
                                         {docs.length} document{docs.length !== 1 ? 's' : ''}
                                     </span>
                                 </div>
-                                
+
                                 {/* Documents Grid */}
                                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
                                     {docs.map((doc) => (
@@ -103,7 +115,7 @@ export default function ClientDocs({
                                             thumbnailKey={doc.thumbnailKey}
                                             fileKey={doc.fileKey}
                                             year={year}
-                                            fileId={doc.id} 
+                                            fileId={doc.id}
                                         />
                                     ))}
                                 </div>
@@ -121,6 +133,14 @@ export default function ClientDocs({
                             >
                                 {isFetchingNextPage ? "Loading more..." : "Load More Documents"}
                             </button>
+                        </div>
+                    )}
+
+                    {!isFetching && allDocs.length === 0 && (
+                        <div className="text-center text-gray-500 mt-12 pb-10">
+                            <File className="mx-auto mb-4 h-16 w-16 text-gray-400" />
+                            <p className="text-lg">No documents found for this client.</p>
+                            {/* <p className="text-sm">Try adjusting your search or upload new documents.</p> */}
                         </div>
                     )}
                 </>

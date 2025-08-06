@@ -15,14 +15,14 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export const getPlanExpiryDate = (duration: string): Date => {
-  if (duration === "1y") {
+export const getPlanExpiryDate = (plan: string): Date => {
+  if (plan === "e77dbc82-7325-4823-b3bc-1e8d4675946c") {
     const date = new Date();
     date.setFullYear(date.getFullYear() + 1);
     return date;
   }
 
-  if (duration === "6m") {
+  if (plan === "83f76a56-bf26-4d93-920e-31f9b6e425fd") {
     const date = new Date();
     date.setMonth(date.getMonth() + 6);
     return date;
@@ -33,11 +33,11 @@ export const getPlanExpiryDate = (duration: string): Date => {
 export const getPlanName = (amoutn: number): string => {
   switch (amoutn) {
     case 600:
-      return "1y";
+      return "e77dbc82-7325-4823-b3bc-1e8d4675946c";
     case 350:
-      return "6m";
+      return "83f76a56-bf26-4d93-920e-31f9b6e425fd";
     case 0:
-      return "ff"; // Forever Free
+      return "925463d3-b270-45b5-8974-944427991663"; // Forever Free
   }
   return "unknown-plan"; // Default case if no match found
 }
@@ -115,7 +115,7 @@ export const checkOutHandler = async (amount: number, userId: string, plan: stri
       "color": "#121212"
     }
   }
-  console.log("window.Razorpay", window.Razorpay);
+  // console.log("window.Razorpay", window.Razorpay);
   const rzp = new window.Razorpay(options);
   rzp.open();
 

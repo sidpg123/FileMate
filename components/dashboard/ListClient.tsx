@@ -1,26 +1,22 @@
 "use client"
-import React, { useState } from 'react'
-import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import { useDebounce } from '@/hooks/useDebounce'
 import { fetchClients } from '@/lib/api/client'
 import { useInfiniteQuery } from '@tanstack/react-query'
-import { useSession } from 'next-auth/react'
-import ClientCard from '../../components/dashboard/ClientCard'
-import { 
-  Search, 
-  Filter, 
-  SortAsc, 
-  SortDesc, 
-  Users, 
-  UserCheck, 
-  UserX,
-  DollarSign,
-  Clock,
-  CheckCircle,
+import {
   AlertCircle,
+  CheckCircle,
+  Filter,
+  Search,
+  SortAsc,
+  SortDesc,
+  Users,
   X
 } from 'lucide-react'
+import { useSession } from 'next-auth/react'
+import { useState } from 'react'
+import ClientCard from '../../components/dashboard/ClientCard'
 
 function ListClient() {
   const session = useSession()
@@ -53,6 +49,7 @@ function ListClient() {
         sortOrder,
       }),
     initialPageParam: null,
+    refetchOnWindowFocus: false,
     getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
   })
 

@@ -3,9 +3,11 @@ import Script from 'next/script';
 import React from 'react'
 import Subscription from '../ui/Subscription';
 import { checkOutHandler } from '@/lib/utils';
+import { useRouter } from 'next/navigation';
 // import { SessionProvider } from 'next-auth/react';
 
 function Purchase() {
+    const router = useRouter();
     return (
         // <SessionProvider>
             
@@ -27,11 +29,11 @@ function Purchase() {
                     <Subscription logo={"https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcTxs_qJFnREFiEtAnov4J7HHhFpSJwQ5IaImgzBacReAR78FbRn"} title={"Forever Free"} description={"Perfect if you are just getting started"} amount={{
                         value: 0,
                         duration: "Free"
-                    }} buttonText={"Start for Free"} checkoutHandler={function (): void {
-                        throw new Error("Function not implemented.");
+                    }} buttonText={"Register for Free"} checkoutHandler={() => {
+                        router.push("/signup")
                     }} featureList={[
                         "500MB of storage",
-                        "10 clents supported",
+                        "10 clients supported",
                         "Upload and download files",
                     ]} />
 
@@ -46,11 +48,9 @@ function Purchase() {
                         "Access to premium features",
                     ]} />
                     <Subscription logo={"https://e4ba5586e110e19acdd7ad946178cb26.cdn.bubble.io/cdn-cgi/image/w=64,h=66,f=auto,dpr=2.5,fit=contain/f1716455841879x907033465235000000/star.png"} title={" 6-Month Professional Plan"} description={"Ideal for short-term needs and testing client collaboration."} amount={{
-                        value: 350,
+                        value: 4000,
                         duration: "6 months"
-                    }} buttonText={"Subscribe for 6 Months"} checkoutHandler={function (): void {
-                        throw new Error("Function not implemented.");
-                    }} featureList={[
+                    }} buttonText={"Subscribe for 6 Months"} checkoutHandler={checkOutHandler} featureList={[
                         "Secure 10GB of storage",
                         "Unlimited clients supported",
                         "Upload and download files",
@@ -66,3 +66,4 @@ function Purchase() {
 }
 
 export default Purchase
+
