@@ -45,7 +45,7 @@ function Navbar() {
               <div className="ml-4 flex items-center space-x-16">
                 <Link href={"/dashboard"}>Dashboard</Link>
                 <Link href={"/dashboard/mydocs"}>My Documents</Link>
-                <Link href={"/dashboard/payments"}>Payments</Link>
+                <Link href={"/dashboard/analytics"}>Analytics</Link>
                 <Link href={"/dashboard/mysubscriptions"}>Subscriptions</Link>
               </div>
             </div>

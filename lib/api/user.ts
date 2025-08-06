@@ -34,3 +34,47 @@ export const createFeesCategory = async ({ name }: {name: string}) => {
 
     return res.data;
 }
+
+export const fetchUserDocuments = async ({
+    pageParam,
+    search,
+    // clientId,
+    year
+} : {
+    pageParam?: {uploadedAt: string; id: string } | null;
+    search?: string;
+    // clientId: string;
+    year?: string;
+}) => {
+    const res = await axiosClient.get(`/user/documents`, {
+        params: {
+            cursorUploadedAt: pageParam?.uploadedAt,
+            cursorId: pageParam?.id,
+            search,
+            // clientId,
+            year
+        }
+    })
+    return res.data;
+}
+
+export const uploadUserDocMetaData = async ({
+    data
+}: {
+    data: {
+        // clientId: string,
+        fileName: string,
+        fileKey: string,
+        year: string,
+        fileSize: number,
+        thumbnailKey: string
+    }
+}) => {
+    try {
+        const res = await axiosClient.post(`user/documents`, data);
+        console.log("response from uploadDocMetaData: ", res);     
+    } catch (error) {
+        console.error("Error occured while uploaing document metaData")
+    }
+    
+}

@@ -47,7 +47,7 @@ const ClientCard: React.FC<clientCardProps> = ({
                 <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${
                     isActive 
                         ? 'bg-green-100 text-green-700' 
-                        : 'bg-gray-100 text-gray-600'
+                        : 'bg-red-100 text-red-600'
                 }`}>
                     {isActive ? 'Active' : 'Inactive'}
                 </span>
@@ -65,7 +65,8 @@ const ClientCard: React.FC<clientCardProps> = ({
                     </div>
                     <div>
                         <p className="text-xs text-gray-500 uppercase tracking-wide">
-                            {hasPendingPayment ? 'Pending' : 'Paid'}
+                            {/* {hasPendingPayment ? 'Pending' : 'Paid'} */}
+                            Pending
                         </p>
                         <p className="font-semibold text-gray-900">
                             {formatCurrency(pendingPaymentNumber)}

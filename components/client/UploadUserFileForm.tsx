@@ -23,8 +23,9 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { v4 as uuidV4 } from "uuid";
 import { Upload, FileText, Calendar, CheckCircle2, Loader2, X } from "lucide-react";
+import { uploadUserDocMetaData } from "@/lib/api/user";
 
-export default function UploadFileForm() {
+export default function UploadUserFileForm() {
     const clientId = useCurrentClient((state) => state.clientId);
     const session = useSession();
     const queryClient = useQueryClient();
@@ -67,7 +68,7 @@ export default function UploadFileForm() {
     });
 
     const uploadFileMetaDataMutation = useMutation({
-        mutationFn: uploadDocMetaData,
+        mutationFn: uploadUserDocMetaData,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["documents"] });
             queryClient.invalidateQueries({ queryKey: ["client"]});
@@ -91,7 +92,7 @@ export default function UploadFileForm() {
             const fileExt = originalFileName.split(".").pop()?.toLowerCase();
             console.log("contentType", values.file.type);
 
-            const key = `users/${userId}/${clientId}/${values.year}/${uuid}.${fileExt}`;
+            const key = `users/${userId}/personal/${values.year}/${uuid}.${fileExt}`;
 
             // Step 1: Get Upload URL from backend
             const { data } = await getUploadUrlMutation.mutateAsync({
@@ -109,11 +110,11 @@ export default function UploadFileForm() {
             // Step 3: update DB
             await uploadFileMetaDataMutation.mutateAsync({
                 data: {
-                    clientId,
+                    // clientId,
                     fileKey: key,
                     fileName: originalFileName,
                     fileSize: values.file.size,
-                    thumbnailKey: fileExt == 'pdf' ? `users/${userId}/${clientId}/${values.year}/${uuid}-thumb.jpg` : 'public/default.jpg',
+                    thumbnailKey: fileExt == 'pdf' ? `users/personal/${values.year}/${uuid}-thumb.jpg` : 'public/default.jpg',
                     year: values.year
                 }
             })        

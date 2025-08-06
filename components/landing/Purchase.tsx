@@ -48,7 +48,7 @@ function Purchase() {
                         "Access to premium features",
                     ]} />
                     <Subscription logo={"https://e4ba5586e110e19acdd7ad946178cb26.cdn.bubble.io/cdn-cgi/image/w=64,h=66,f=auto,dpr=2.5,fit=contain/f1716455841879x907033465235000000/star.png"} title={" 6-Month Professional Plan"} description={"Ideal for short-term needs and testing client collaboration."} amount={{
-                        value: 4000,
+                        value: 400,
                         duration: "6 months"
                     }} buttonText={"Subscribe for 6 Months"} checkoutHandler={checkOutHandler} featureList={[
                         "Secure 10GB of storage",

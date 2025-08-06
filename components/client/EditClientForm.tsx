@@ -17,11 +17,18 @@ import {
     FormMessage
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
 import { useCurrentClient } from "@/store/store"
 import { useSession } from "next-auth/react"
 import { EditClientFormSchema, EditClientFormSchemaType } from "@/zodSchem/cleint.schemas"
-
-
+import { Loader2 } from "lucide-react"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 
 export function EditClientForm() {
     const session = useSession();
@@ -29,11 +36,10 @@ export function EditClientForm() {
     const name = useCurrentClient((state) => state.name);
     const email = useCurrentClient((state) => state.email);
     const phone = useCurrentClient((state) => state.phone);
+    const status = useCurrentClient((state) => state.status);
     const clientId = useCurrentClient((state) => state.clientId);
     const setEditClientDialogOpen = useCurrentClient((state) => state.setEditClientDialogOpen);
     const queryClient = useQueryClient();
-
-
 
     const form = useForm<EditClientFormSchemaType>({
         resolver: zodResolver(EditClientFormSchema),
@@ -41,26 +47,27 @@ export function EditClientForm() {
             name,
             email,
             phone: phone ?? "",
+            status: status || 'active',
         },
     })
 
-    const { mutate, status, error } = useMutation({
+    const { mutate, isPending, error } = useMutation({
         mutationFn: editClientById,
         onSuccess: (data) => {
             console.log("Client updated successfully:", data)
             toast.success("Client updated successfully")
             
-            queryClient.invalidateQueries({ queryKey: ['client', clientId] }) // Invalidate the query to refetch the updated client data
-            queryClient.invalidateQueries({ queryKey: ['clients'] }) // Invalidate the clients list query if needed
+            queryClient.invalidateQueries({ queryKey: ['client', clientId] })
+            queryClient.invalidateQueries({ queryKey: ['clients'] })
             useCurrentClient.setState({
                 name: data.name,
                 email: data.email,
                 phone: data.phone,
-                clientId: data.clientId, // Ensure clientId is also updated
+                status: data.status,
+                clientId: data.clientId,
             })
-            setEditClientDialogOpen(false) // Close the dialog after successful submission
-            
-            form.reset() // Reset the form after successful submission
+            setEditClientDialogOpen(false)
+            form.reset()
         },
         onError: (error) => {
             console.error("Error updating client:", error)
@@ -69,22 +76,29 @@ export function EditClientForm() {
                 duration: 5000,
             })
         }
-
     })
 
     function onSubmit(values: z.infer<typeof EditClientFormSchema>) {
         console.log("accesstoken", session.data?.accessToken);
         mutate({
-            clientId: clientId, // Replace this
+            clientId: clientId,
             data: values,
             // accessToken: `${session.data?.accessToken}`,
         })
     }
 
-
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                {error && (
+                    <Alert variant="destructive">
+                        <AlertDescription>
+                            {/* @ts-ignore */}
+                            {error.response?.data?.message || error.message || "An error occurred while updating the client"}
+                        </AlertDescription>
+                    </Alert>
+                )}
+
                 <FormField
                     control={form.control}
                     name="name"
@@ -92,12 +106,17 @@ export function EditClientForm() {
                         <FormItem>
                             <FormLabel>Name</FormLabel>
                             <FormControl>
-                                <Input placeholder="name" {...field} />
+                                <Input 
+                                    placeholder="Enter client name" 
+                                    disabled={isPending}
+                                    {...field} 
+                                />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
                     )}
                 />
+
                 <FormField
                     control={form.control}
                     name="email"
@@ -105,12 +124,18 @@ export function EditClientForm() {
                         <FormItem>
                             <FormLabel>Email</FormLabel>
                             <FormControl>
-                                <Input placeholder="email" {...field} />
+                                <Input 
+                                    placeholder="Enter email address" 
+                                    type="email"
+                                    disabled={isPending}
+                                    {...field} 
+                                />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
                     )}
                 />
+
                 <FormField
                     control={form.control}
                     name="phone"
@@ -118,13 +143,68 @@ export function EditClientForm() {
                         <FormItem>
                             <FormLabel>Phone</FormLabel>
                             <FormControl>
-                                <Input placeholder="phone" {...field} />
+                                <Input 
+                                    placeholder="Enter phone number" 
+                                    disabled={isPending}
+                                    {...field} 
+                                />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
                     )}
                 />
-                <Button type="submit">Submit</Button>
+
+                <FormField
+                    control={form.control}
+                    name="status"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Status</FormLabel>
+                            <Select 
+                                onValueChange={field.onChange} 
+                                defaultValue={field.value}
+                                disabled={isPending}
+                            >
+                                <FormControl>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select client status" />
+                                    </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                    <SelectItem value="active">Active</SelectItem>
+                                    <SelectItem value="inactive">Inactive</SelectItem>
+                                </SelectContent>
+                            </Select>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+
+                <div className="flex gap-3 pt-4">
+                    <Button 
+                        type="submit" 
+                        disabled={isPending}
+                        className="flex-1"
+                    >
+                        {isPending ? (
+                            <>
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                Updating...
+                            </>
+                        ) : (
+                            "Update Client"
+                        )}
+                    </Button>
+                    
+                    <Button 
+                        type="button" 
+                        variant="outline"
+                        onClick={() => setEditClientDialogOpen(false)}
+                        disabled={isPending}
+                    >
+                        Cancel
+                    </Button>
+                </div>
             </form>
         </Form>
     )

@@ -4,6 +4,7 @@ import { z } from "zod";
     name: z.string().min(1, "Name is required"),
     email: z.string().email("Invalid email address"),
     phone: z.string().optional(),
+    status: z.string()
 })
 
 export type EditClientFormSchemaType = z.infer<typeof EditClientFormSchema>;

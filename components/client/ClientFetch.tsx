@@ -19,7 +19,10 @@ import {
     AlertCircle,
     BarChart3,
     ChevronUp,
-    ChevronDown
+    ChevronDown,
+    IndianRupee,
+    TrendingUp,
+    XCircle
 } from "lucide-react";
 
 export default function ClientFetch({
@@ -49,12 +52,13 @@ export default function ClientFetch({
         staleTime: 1000 * 60 * 5,
     });
     console.log("data", data);
-    const { setClientId, setEmail, setName, setPhone, setPendingFees } = useCurrentClient(
+    const { setClientId, setEmail, setName, setPhone, setPendingFees, setStatus } = useCurrentClient(
         (state) => state
     );
 
     const pendingFees = data?.summary?.pendingFeesAmount || 0;
-    const totalFees = data?.summary?.totalFeesCount || 0;
+    const clientStatus = data?.client.status || '';
+
     const paidFees = data?.summary?.paidFeesAmount || 0;
     useEffect(() => {
         if (data?.client) {
@@ -63,6 +67,7 @@ export default function ClientFetch({
             setEmail(data.client.email || "");
             setPhone(data.client.phone || "");
             setPendingFees(pendingFees || 0);
+            setStatus(data.client.status || "");
         }
         console.log("ClientFetch data: ", data);
     }, [data]);
@@ -210,35 +215,48 @@ export default function ClientFetch({
                                 </CardContent>
                             </Card>
 
-                            {/* Total Fees */}
                             <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-md hover:shadow-lg transition-shadow">
                                 <CardContent className="p-4">
                                     <div className="flex items-center gap-3">
-                                        <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                                            <CreditCard className="w-5 h-5 text-blue-600" />
+                                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${clientStatus?.toLowerCase() === 'active'
+                                                ? 'bg-green-100'
+                                                : 'bg-red-100'
+                                            }`}>
+                                            {clientStatus?.toLowerCase() === 'active' ? (
+                                                <CheckCircle2 className="w-5 h-5 text-green-600" />
+                                            ) : (
+                                                <XCircle className="w-5 h-5 text-red-600" />
+                                            )}
                                         </div>
                                         <div>
-                                            <p className="text-sm text-gray-600 font-medium">Total Fees</p>
-                                            <p className="text-lg font-bold text-gray-800">
-                                                {totalFees}
+                                            <p className="text-sm text-gray-600 font-medium">Status</p>
+                                            <p className={`text-lg font-bold ${clientStatus?.toLowerCase() === 'active'
+                                                    ? 'text-green-700'
+                                                    : 'text-red-700'
+                                                }`}>
+                                                {clientStatus}
                                             </p>
                                         </div>
                                     </div>
                                 </CardContent>
                             </Card>
 
-                            {/* Paid Fees */}
                             <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-md hover:shadow-lg transition-shadow">
                                 <CardContent className="p-4">
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                                            <CheckCircle2 className="w-5 h-5 text-green-600" />
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center shadow-lg">
+                                                <IndianRupee className="w-6 h-6 text-white" />
+                                            </div>
+                                            <div>
+                                                <p className="text-xs text-green-700 font-semibold uppercase tracking-wide">Paid Fees</p>
+                                                <p className="text-2xl font-black text-green-800">
+                                                    {paidFees}
+                                                </p>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <p className="text-sm text-gray-600 font-medium">Paid Fees</p>
-                                            <p className="text-lg font-bold text-green-600">
-                                                {paidFees}
-                                            </p>
+                                        <div className="text-green-500/30">
+                                            <TrendingUp className="w-8 h-8" />
                                         </div>
                                     </div>
                                 </CardContent>

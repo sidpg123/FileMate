@@ -51,6 +51,7 @@ export const editClientById = async ({
         name?: string;
         email?: string;
         phone?: string;
+        status?: string; // active, inactive, archived
     };
     // accessToken: string;
 }) => {

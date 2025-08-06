@@ -1,43 +1,42 @@
 "use client"
 
-import React from 'react';
-import { 
-  Card, 
-  CardContent, 
-  CardDescription, 
-  CardHeader, 
-  CardTitle 
-} from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle
+} from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
-import {
-  Crown,
-  Calendar,
-  HardDrive,
-  Users,
-  CreditCard,
-  Settings,
-  Zap,
-  Shield,
-  CheckCircle,
-  Clock,
-  AlertCircle,
-  TrendingUp,
-  Gift
-} from 'lucide-react';
-import { useQuery } from '@tanstack/react-query';
 import { getSubscription } from '@/lib/api/subscription';
-import { toast } from 'sonner';
-import { UserInfoResponse } from '@/types/api/user';
 import { getUserInfo } from '@/lib/api/user';
 import { useUserDetailsStore } from '@/store/store';
+import { UserInfoResponse } from '@/types/api/user';
+import { useQuery } from '@tanstack/react-query';
+import {
+  AlertCircle,
+  Calendar,
+  CheckCircle,
+  Clock,
+  CreditCard,
+  Crown,
+  Gift,
+  HardDrive,
+  Settings,
+  Shield,
+  Users
+} from 'lucide-react';
+import React from 'react';
+import { toast } from 'sonner';
 
 // TypeScript interfaces
 interface Subscription {
   id: string;
   userId: string;
+  message?: string;
   // plan: PlanType;
   planId: string;
   status: SubscriptionStatus;
@@ -95,18 +94,6 @@ const planFeatures: Record<PlanType, PlanFeature> = {
 };
 
 
-
-const mockUser: User & { clientCount: number } = {
-  id: "user_123",
-  name: "Rajesh Kumar",
-  email: "rajesh@example.com",
-  passwordHash: "hashed_password",
-  role: "CA",
-  storageUsed: BigInt(15728640000), // ~14.6 GB in bytes
-  allocatedStorage: BigInt(53687091200), // ~50 GB in bytes
-  createdAt: "2024-01-15T00:00:00Z",
-  clientCount: 87
-};
 
 // Utility functions
 const formatBytes = (bytes: bigint | number): string => {
@@ -173,20 +160,26 @@ const getStatusBadge = (status: SubscriptionStatus): React.ReactNode => {
 
 const MySubscriptionPage: React.FC = () => {
   const currentUserEmail = useUserDetailsStore((state) => state.email);
-  const {data: subscription, status: subscriptionStatus} = useQuery<Subscription>({
+  
+  const {data: subscription, status: subscriptionStatus, isError, error} = useQuery<Subscription>({
     queryKey: ['subscription'],
     queryFn: async () => {
       const res = await getSubscription();
-
       if (!res) {
         toast.error('No subscription data found');
         throw new Error('No subscription data found');
       }
       return res;
       
-    }
+    },
+    refetchOnWindowFocus: false
   })
 
+  if(isError) {
+    console.log(subscription)
+    // toast.error(subscription.message)
+    toast.error(error.message);
+  }
   const { data: user, status: userStatus } = useQuery<UserInfoResponse>({
     queryKey: ["userInfo"],
     queryFn: async () => {

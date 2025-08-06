@@ -13,6 +13,8 @@ interface currentClientStore {
     phone?: string;
     pendingFees?: number;
     openEditClientDialog?: boolean;
+    status?: string;
+    setStatus: (status: string) => void;
     setEditClientDialogOpen: (open: boolean) => void;
     setClientId: (clientId: string) => void;
     setName: (name: string) => void;
@@ -104,7 +106,11 @@ export const useCurrentClient = create<currentClientStore>((set) => ({
     name: '',
     email: '',
     phone: '',
+    status: '',
     openEditClientDialog: false,
+    setStatus(status) {
+        set(() => ({ status}))
+    },
     setEditClientDialogOpen(open) {
         set(() => ({ openEditClientDialog: open }))
     },

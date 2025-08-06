@@ -1,16 +1,15 @@
 
 "use client";
-import React, { useState } from "react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { getUserInfo } from "@/lib/api/user";
 import { formatBytes } from "@/lib/utils";
 import { useUserDetailsStore } from "@/store/store";
 import { UserInfoResponse } from "@/types/api/user";
 import { useQuery } from "@tanstack/react-query";
+import { BarChart3, ChevronDown, ChevronUp, Database, IndianRupee, Users } from "lucide-react";
 import { useSession } from "next-auth/react";
-import { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Users, Database, DollarSign, ChevronDown, ChevronUp, BarChart3 } from "lucide-react";
 
 export default function InfoHero() {
   const [isVisible, setIsVisible] = useState(true);
@@ -165,7 +164,7 @@ export default function InfoHero() {
                 <MetricCard
                   label="Pending Fees"
                   value={data?.data.totalPendingFees ?? "-"}
-                  icon={<DollarSign className="w-4 h-4" />}
+                  icon={<IndianRupee className="w-4 h-4" />}
                   gradient="from-emerald-500 to-teal-600"
                   bgGradient="from-emerald-50 to-teal-50"
                 />
@@ -268,7 +267,7 @@ export default function InfoHero() {
                 <MetricCard
                   label="Pending Fees"
                   value={data?.data.totalPendingFees ?? "-"}
-                  icon={<DollarSign className="w-5 h-5" />}
+                  icon={<IndianRupee className="w-5 h-5" />}
                   gradient="from-emerald-500 to-teal-600"
                   bgGradient="from-emerald-50 to-teal-50"
                 />
