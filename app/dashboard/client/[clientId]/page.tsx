@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import ClientDocs from "@/components/client/ClientDocs";
 import ClientFetch from "@/components/client/ClientFetch";
 
-export default function page({
+export default function Page({
     params
 }: {
     params: Promise<{ clientId: string }>

@@ -29,6 +29,7 @@ import { useSession } from "next-auth/react"
 import { EditClientFormSchema, EditClientFormSchemaType } from "@/zodSchem/cleint.schemas"
 import { Loader2 } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { AxiosError } from "axios"
 
 export function EditClientForm() {
     const session = useSession();
@@ -69,12 +70,12 @@ export function EditClientForm() {
             setEditClientDialogOpen(false)
             form.reset()
         },
-        onError: (error) => {
-            console.error("Error updating client:", error)
-            // @ts-ignore
-            toast.error(`Error: ${error.response?.data?.message || error.message}`, {
-                duration: 5000,
-            })
+        onError: (err) => {
+             if (err instanceof AxiosError) {
+                toast.error(err.response?.data?.error || "An error occurred during edit");
+            } else {
+                toast.error("An unknown error occurred");
+            }
         }
     })
 
@@ -90,10 +91,10 @@ export function EditClientForm() {
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                {error && (
+                {error  && (
                     <Alert variant="destructive">
                         <AlertDescription>
-                            {/* @ts-ignore */}
+{/* @ts-expect-error – error type from Axios can be unknown */}
                             {error.response?.data?.message || error.message || "An error occurred while updating the client"}
                         </AlertDescription>
                     </Alert>

@@ -56,7 +56,7 @@ function CreateFeeDialog({
 
   const queryClient = useQueryClient()
 
-  const { data: feesCategories, isLoading: categoriesLoading } = useQuery({
+  const { data: feesCategories } = useQuery({
     queryKey: ["feesCategories"],
     queryFn: fetchFeesCategories,
     refetchOnWindowFocus: false
@@ -75,18 +75,18 @@ function CreateFeeDialog({
       onOpenChange(false)
       resetForm()
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast.error(error?.message || 'Failed to create fee record')
     }
   })
 
   const createCategoryMutation = useMutation({
     mutationFn: createFeesCategory,
-    onSuccess: (newCategory) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['feesCategories'] })
       toast.success('Category created successfully!')
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast.error(error?.message || 'Failed to create category')
     }
   })

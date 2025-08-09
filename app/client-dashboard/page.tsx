@@ -1,12 +1,16 @@
-import Navbar from '@/components/Navbar'
-import React from 'react'
+// import Navbar from '@/components/Navbar'
+import ClientDashboard from '@/components/client-dashboard/ClientDashboard'
+import Navbar from '@/components/ClientNav'
 
-function ClientDashboard() {
+function ClientDashboardPage() {
   return (
     <div>
+      {/* <Navbar /> */}
       <Navbar />
+      <ClientDashboard />
+      
     </div>
   )
 }
 
-export default ClientDashboard
+export default ClientDashboardPage

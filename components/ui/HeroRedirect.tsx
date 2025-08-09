@@ -1,16 +1,16 @@
 "use client"
 
-import { useSession } from 'next-auth/react'
+import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
-import React from 'react'
+import React from 'react';
 import { Button } from './button';
 
 interface params {
     title: string,
     route: string
     styles?: string
-    extraComp?: any
+    extraComp?: React.ReactNode
 }
 
 function HeroRedirect(params: params) {

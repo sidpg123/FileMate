@@ -1,43 +1,35 @@
 "use client"
 
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import { useDebounce } from '@/hooks/useDebounce'
-import { fetchClientFees } from '@/lib/api/fees'
-import { fetchFeesCategories } from '@/lib/api/user'
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
-import { Calendar, Edit, FileText, Filter, IndianRupeeIcon, Search, TrendingUp, X } from 'lucide-react'
+import { useInfiniteQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 import { Badge } from '../ui/badge'
 import { Button } from '../ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
 import { Input } from '../ui/input'
-import CreateFeeDialog from './CreateFeeDialog'
-import DeleteFeesDialogue from './DeleteFeesDealogue'
-import EditFeeDialog from './EditFeeDialog'
+// import { fetchClientFees, createFee, updateFee } from '@/lib/api/fees'
+// import CreateFeeDialog from './CreateFeeDialog'
+// import EditFeeDialog from './EditFeeDialog'
+import { fetchClientFees } from '@/lib/api/client-dashboard'
+import { Calendar, FileText, IndianRupeeIcon, Search, TrendingUp, X } from 'lucide-react'
+// import DeleteFeesDialogue from './DeleteFeesDealogue'
 
 
 type FeeStatus = 'Pending' | 'Paid' | 'Overdue'
 type FeeFilter = 'all' | 'pending' | 'paid'
 
-interface FeesCategory {
-  id: string
-  name: string
-  description?: string
-  createdAt?: string
-  updatedAt?: string
-  userId?: string
-}
-interface FeesCategoryData {
-  success: string
-  data: FeesCategory[]
-}
+// interface FeesCategory {
+//   id: string
+//   name: string
+//   description?: string
+//   createdAt?: string
+//   updatedAt?: string
+//   userId?: string
+// }
+// interface FeesCategoryData {
+//   success: string
+//   data: FeesCategory[]
+// }
 
 interface Fee {
   id: string
@@ -118,27 +110,23 @@ const formatCurrency = (amount: number) => {
   }).format(amount)
 }
 
-export default function ClientFees({
-  clientId
-}: {
-  clientId: string
-}) {
+export default function ClientFees() {
   const [search, setSearch] = useState("")
   const [filter, setFilter] = useState<FeeFilter>('all')
-  const [editingFee, setEditingFee] = useState<Fee | null>(null)
-  const [showCreateDialog, setShowCreateDialog] = useState(false)
-  const [selectedCategory, setSelectedCategory] = useState('')
+//   const [editingFee, setEditingFee] = useState<Fee | null>(null)
+//   const [showCreateDialog, setShowCreateDialog] = useState(false)
+//   const [selectedCategory, setSelectedCategory] = useState('')
 
   const debouncedSearch = useDebounce(search, 500)
   // const queryClient = useQueryClient()
 
-  const { data: feesCategoriesData, isLoading: categoriesLoading } = useQuery<FeesCategoryData>({
-    queryKey: ["feesCategories"],
-    queryFn: fetchFeesCategories,
-    refetchOnWindowFocus: false
-  })
+//   const { data: feesCategoriesData, isLoading: categoriesLoading } = useQuery<FeesCategoryData>({
+//     queryKey: ["feesCategories"],
+//     queryFn: fetchFeesCategories,
+//     refetchOnWindowFocus: false
+//   })
 
-  const feesCategories = feesCategoriesData?.data;
+//   const feesCategories = feesCategoriesData?.data;
 
   const {
     data,
@@ -148,14 +136,12 @@ export default function ClientFees({
     isFetchingNextPage,
     // status: queryStatus
   } = useInfiniteQuery({
-    queryKey: ["fees", clientId, debouncedSearch, filter, selectedCategory],
+    queryKey: ["fees", debouncedSearch, filter],
     queryFn: ({ pageParam }) =>
       fetchClientFees({
         pageParam,
         search: debouncedSearch,
         filter,
-        clientId,
-        feeCategoryId: selectedCategory
       }),
     initialPageParam: null,
     refetchOnWindowFocus: false,
@@ -168,17 +154,17 @@ export default function ClientFees({
   const groupedFees = groupFeesByStatus(allFees)
   const summary = calculateSummary(allFees)
 
-  const getCategoryName = (categoryId: string) => {
-    return feesCategories?.find(cat => cat.id === categoryId)?.name || 'Unknown Category'
-  }
+//   const getCategoryName = (categoryId: string) => {
+//     return feesCategories?.find(cat => cat.id === categoryId)?.name || 'Unknown Category'
+//   }
 
   const clearFilters = () => {
     setSearch('')
     setFilter('all')
-    setSelectedCategory('')
+    // setSelectedCategory('')
   }
 
-  const hasActiveFilters = search || filter !== 'all' || selectedCategory
+  const hasActiveFilters = search || filter !== 'all' 
 
   const filteredFees = filter === 'all'
     ? allFees
@@ -254,13 +240,13 @@ export default function ClientFees({
           <div className="space-y-4">
             {/* Top Row - Create Button and Active Filters */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-              <Button
+              {/* <Button
                 onClick={() => setShowCreateDialog(true)}
                 className="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white hover:from-emerald-600 hover:to-emerald-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
               >
                 <IndianRupeeIcon className="h-4 w-4 mr-2" />
                 Create New Fee
-              </Button>
+              </Button> */}
 
               {hasActiveFilters && (
                 <div className="flex items-center gap-2">
@@ -302,7 +288,7 @@ export default function ClientFees({
               </div>
 
               {/* Category Filter */}
-              <DropdownMenu>
+              {/* <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="outline"
@@ -346,7 +332,7 @@ export default function ClientFees({
                     ))
                   )}
                 </DropdownMenuContent>
-              </DropdownMenu>
+              </DropdownMenu> */}
 
               {/* Status Filter Buttons */}
               <div className="flex gap-2 items-center justify-center">
@@ -437,10 +423,10 @@ export default function ClientFees({
                     <Badge className={getStatusColor(fee.status)}>
                       {fee.status}
                     </Badge>
-                    <DeleteFeesDialogue 
+                    {/* <DeleteFeesDialogue 
                       feeId={fee.id}
                        clientId={clientId}
-                    />
+                    /> */}
                   </div>
                 </div>
               </CardHeader>
@@ -470,7 +456,7 @@ export default function ClientFees({
                   Created: {formatDate(fee.createdAt)}
                 </div>
 
-                <Button
+                {/* <Button
                   variant="outline"
                   size="sm"
                   onClick={() => setEditingFee(fee)}
@@ -478,7 +464,7 @@ export default function ClientFees({
                 >
                   <Edit className="h-4 w-4 mr-2" />
                   Edit Fee
-                </Button>
+                </Button> */}
               </CardContent>
             </Card>
           ))}
@@ -507,7 +493,7 @@ export default function ClientFees({
       )}
 
       {/* Dialogs */}
-      {showCreateDialog && (
+      {/* {showCreateDialog && (
         <CreateFeeDialog
           clientId={clientId}
           open={showCreateDialog}
@@ -523,7 +509,7 @@ export default function ClientFees({
           open={!!editingFee}
           onOpenChange={(open) => !open && setEditingFee(null)}
         />
-      )}
+      )} */}
     </div>
   )
 }

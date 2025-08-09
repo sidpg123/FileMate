@@ -18,6 +18,7 @@ import { useNewUserFormStore } from '@/store/store'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { createClient } from '@/lib/api/client'
 import { toast } from 'sonner'
+import { AxiosError } from 'axios'
 
 
 
@@ -35,7 +36,7 @@ export default function NewClientForm() {
     const setOpenNewUserDialog = useNewUserFormStore((state) => state.setOpenNewUserDialog)
 
 
-    const { mutate, status, error } = useMutation({
+    const { mutate } = useMutation({
         mutationFn: createClient,
         onSuccess: (data) => {
             console.log("Client created successfully:", data)
@@ -47,8 +48,9 @@ export default function NewClientForm() {
         },
         onError: (error) => {
             console.error("Error creating client:", error)
-            //@ts-ignore
-            toast.error(error.response?.data.message || "Failed to create client")
+            if(error instanceof AxiosError){
+                toast.error(error.response?.data.message || "Failed to create client")
+            }
             // Handle error here, like showing an error message
         }
     })

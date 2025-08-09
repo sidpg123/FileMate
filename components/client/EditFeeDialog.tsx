@@ -1,6 +1,12 @@
 "use client"
 
-import { useState, useEffect } from 'react'
+import { updateFee } from '@/lib/api/fees'
+import { createFeesCategory, fetchFeesCategories } from '@/lib/api/user'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { Loader2 } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { toast } from 'sonner'
+import { Button } from '../ui/button'
 import {
   Dialog,
   DialogContent,
@@ -8,49 +14,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from '../ui/dialog'
-import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 import { Label } from '../ui/label'
-import { Textarea } from '../ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { updateFee } from '@/lib/api/fees'
-import { toast } from 'sonner'
-import { Loader2 } from 'lucide-react'
+import { Textarea } from '../ui/textarea'
 import CategorySelector from './SelectCategory'
-import { createFeesCategory, fetchFeesCategories } from '@/lib/api/user'
 
-interface Fee {
-  id: string
-  clientId: string
-  amount: number
-  dueDate: string
-  note?: string
-  status: 'Pending' | 'Paid' | 'Overdue'
-  createdAt: string
-  paymentDate?: string
-  feeCategoryId: string
-  feeCategory?: {
-    id: string
-    name: string
-  }
-}
-
-interface FeeCategory {
-  id: string
-  name: string
-  description?: string
-  createdAt?: string
-  updatedAt?: string
-  userId?: string
-}
-
-interface EditFeeDialogProps {
-  fee: Fee
-  open: boolean
-  clientId: string
-  onOpenChange: (open: boolean) => void
-}
 
 
 
@@ -76,7 +45,7 @@ export default function EditFeeDialog({
 
   const queryClient = useQueryClient()
 
-  const { data: feesCategories, isLoading: categoriesLoading } = useQuery({
+  const { data: feesCategories } = useQuery({
   queryKey: ["feesCategories"],
   queryFn: fetchFeesCategories,
   refetchOnWindowFocus: false
@@ -110,18 +79,18 @@ export default function EditFeeDialog({
       toast.success('Fee record updated successfully!')
       onOpenChange(false)
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast.error(error?.message || 'Failed to update fee record')
     }
   })
 
   const createCategoryMutation = useMutation({
     mutationFn: createFeesCategory,
-    onSuccess: (newCategory) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['feesCategories'] })
       toast.success('Category created successfully!')
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast.error(error?.message || 'Failed to create category')
     }
   })
@@ -275,7 +244,7 @@ const handleCategorySelect = (category: { id: string, name: string }) => {
             <Label htmlFor="note">Note (Optional)</Label>
             <Textarea
               id="note"
-              placeholder="Add any additional notes..."
+              placeholder="Add Error additional notes..."
               value={formData.note}
               onChange={(e) => handleInputChange('note', e.target.value)}
               rows={3}

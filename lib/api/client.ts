@@ -1,4 +1,5 @@
 // import { useSession } from "next-auth/react";
+import { AxiosError } from "axios";
 import { axiosClient } from "../utils";
 
 export const fetchClients = async ({
@@ -91,8 +92,15 @@ export const uploadDocMetaData = async ({
     try {
         const res = await axiosClient.post(`clients/document`, data);
         console.log("response from uploadDocMetaData: ", res);     
-    } catch (error) {
-        console.error("Error occured while uploaing document metaData")
+    } catch (err) {
+        if (err instanceof AxiosError) {
+                // toast.error(err.response?.data?.error || "An error occurred during upload");
+                console.log(err)
+            } else {
+                // toast.error("An unknown error occurred");
+                console.log(err)
+            }
+
     }
     
 }

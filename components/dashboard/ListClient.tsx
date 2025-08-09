@@ -14,12 +14,10 @@ import {
   Users,
   X
 } from 'lucide-react'
-import { useSession } from 'next-auth/react'
 import { useState } from 'react'
 import ClientCard from '../../components/dashboard/ClientCard'
 
 function ListClient() {
-  const session = useSession()
 
   const [search, setSearch] = useState<string>("")
   const [status, setStatus] = useState("") // 'active' | 'inactive' | ''
@@ -37,11 +35,11 @@ function ListClient() {
     isFetching,
     isFetchingNextPage,
     status: queryStatus,
-  } = useInfiniteQuery({
+  } = useInfiniteQuery<TGetClients>({
     queryKey: ["clients", debouncedSearch, status, feeStatus, sortBy, sortOrder],
-    queryFn: ({ pageParam = null }) =>
+    queryFn: ({ pageParam }) =>
       fetchClients({
-        pageParam,
+        pageParam: pageParam as { createdAt: string; id: string } | null,
         search: debouncedSearch,
         status,
         feeStatus,
@@ -183,7 +181,7 @@ function ListClient() {
             {hasActiveFilters && (
               <div className="flex flex-wrap items-center gap-2 pt-2">
                 <span className="text-sm text-gray-600">Active filters:</span>
-                
+
                 {search && (
                   <span className="inline-flex items-center gap-1 bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-1 rounded-full">
                     Search: {search}
@@ -192,7 +190,7 @@ function ListClient() {
                     </button>
                   </span>
                 )}
-                
+
                 {status && (
                   <span className="inline-flex items-center gap-1 bg-green-100 text-green-800 text-xs font-medium px-2.5 py-1 rounded-full">
                     Status: {status}
@@ -201,7 +199,7 @@ function ListClient() {
                     </button>
                   </span>
                 )}
-                
+
                 {feeStatus && (
                   <span className="inline-flex items-center gap-1 bg-orange-100 text-orange-800 text-xs font-medium px-2.5 py-1 rounded-full">
                     Payment: {feeStatus}
@@ -239,8 +237,8 @@ function ListClient() {
           <Users className="mx-auto h-12 w-12 text-gray-400" />
           <h3 className="mt-4 text-lg font-medium text-gray-900">No clients found</h3>
           <p className="mt-2 text-gray-500">
-            {hasActiveFilters 
-              ? "Try adjusting your search or filters" 
+            {hasActiveFilters
+              ? "Try adjusting your search or filters"
               : "Get started by adding your first client"
             }
           </p>
@@ -333,12 +331,12 @@ function ListClient() {
       {/* Client Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
         {data?.pages.flatMap((group) =>
-          group.clients.map((client: any) => (
+          group.clients.map((client: Client) => (
             <ClientCard
               key={client.id}
               name={client.name}
               id={client.id}
-              phoneNumber={client.phone}
+              phoneNumber={client.phone!}
               pendingPayment={client.pendingFees}
               status={client.status}
             />
@@ -375,7 +373,7 @@ function ListClient() {
       {/* End of Results */}
       {queryStatus === "success" && !hasNextPage && totalClients > 0 && (
         <div className="text-center py-6 text-sm text-gray-500 border-t">
-          You've reached the end of the list
+          You&apos;ve reached the end of the list
         </div>
       )}
     </div>

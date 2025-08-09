@@ -4,6 +4,7 @@ import GoogleProvider from "next-auth/providers/google";
 import jwt from 'jsonwebtoken'
 import { JWT } from "next-auth/jwt";
 import { toast } from "sonner";
+// import { redirect } from "next/navigation";
 
 
 async function refreshAccessToken(token: JWT) {
@@ -162,6 +163,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         const data = await res.json();
         if (data.success === false) {
           console.log("Error in google login", data.message);
+          // redirect('/signin');
           throw new Error(data.message || "Google login failed");
         }
         else {
@@ -169,7 +171,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           user.databaseId = data.id;
           user.refreshToken = data.refreshToken;
           user.role = data.role;
-          user.subscriptionExpiry = data.subscriptionExpiry;
+          // user.subscriptionExpiry = data.subscriptionExpiry;
           user.id = data.id;
         }
 
@@ -183,7 +185,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
       return false; // Reject sign-in for other providers
     },
-    jwt: async ({ token, user, account }) => {
+    jwt: async ({ token, user }) => {
 
 
       if (token.accessToken) {
@@ -215,7 +217,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         }
         token.role = user.role;
         // token.storageUsed = user.storageUsed;
-        token.subscriptionExpiry = user.subscriptionExpiry;
+        // token.subscriptionExpiry = user.subscriptionExpiry;
         token.accessToken = user.accessToken;
         token.accessTokenExpiresIn = user.accessTokenExpiresIn; // Ensure this is set
         token.refreshToken = user.refreshToken; 

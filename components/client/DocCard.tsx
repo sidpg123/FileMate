@@ -6,6 +6,7 @@ import React, { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import FileOptionsDropdown from "./FileMenuDropdown";
 import { useCurrentFileStore } from "@/store/store";
+import Image from "next/image";
 
 interface DocCardProps {
   fileName: string;
@@ -13,6 +14,8 @@ interface DocCardProps {
   fileKey: string;
   year: string;
   fileId: string;
+  showDropdown: boolean;
+
 }
 
 const fallbackThumbnail = "/images/default-thumbnail.png";
@@ -36,7 +39,7 @@ async function waitForThumbnail(thumbnailUrl: string, maxRetries = 3) {
   return false;
 }
 
-const DocCard: React.FC<DocCardProps> = ({ year, fileName, thumbnailKey, fileKey, fileId }) => {
+const DocCard: React.FC<DocCardProps> = ({ year, fileName, thumbnailKey, fileKey, fileId, showDropdown = true }) => {
   const [imgSrc, setImgSrc] = useState(thumbnailKey);
   const [isLoading, setIsLoading] = useState(true);  
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -78,14 +81,15 @@ const DocCard: React.FC<DocCardProps> = ({ year, fileName, thumbnailKey, fileKey
       <div className="rounded-xl overflow-hidden border shadow-md group hover:shadow-xl transition-all bg-white hover:scale-105">
         {/* File name */}
         <div className="bg-slate-700 text-white px-4 py-2 text-sm font-semibold truncate">
-          <div className="float-right">
+          {showDropdown ? (<div className="float-right"> 
             <FileOptionsDropdown 
               isOpen={isDropdownOpen}
               onOpenChange={setIsDropdownOpen}
               onAction={setDocMetaDataState}
               cardId={fileId} // Unique identifier for this card
             />
-          </div>
+          </div>) : (<></>)}
+          
           {fileName}
         </div>
 
@@ -96,7 +100,7 @@ const DocCard: React.FC<DocCardProps> = ({ year, fileName, thumbnailKey, fileKey
             </div>
           )}
 
-          <img
+          <Image
             src={imgSrc}
             alt="Thumbnail"
             

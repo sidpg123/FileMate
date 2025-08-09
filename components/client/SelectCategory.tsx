@@ -148,7 +148,8 @@ export default function CategorySelector({
                             ))
                         ) : searchTerm ? (
                             <div className="px-3 py-2 text-sm text-gray-500">
-                                No categories found for "{searchTerm}"
+                                No categories found for &quot;{searchTerm}&quot;
+
                             </div>
                         ) : (
                             <div className="px-3 py-2 text-sm text-gray-500">

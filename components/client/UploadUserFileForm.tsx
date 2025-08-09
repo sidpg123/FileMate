@@ -11,22 +11,21 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { uploadDocMetaData } from "@/lib/api/client";
 import { getUploadUrl } from "@/lib/api/s3";
-import { useCurrentClient } from "@/store/store";
+import { uploadUserDocMetaData } from "@/lib/api/user";
 import { UploadFileFormSchema, UploadFileFormSchemaType } from "@/zodSchem/cleint.schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { AxiosError } from "axios";
+import { Calendar, CheckCircle2, FileText, Loader2, Upload, X } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useDropzone } from "react-dropzone";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { v4 as uuidV4 } from "uuid";
-import { Upload, FileText, Calendar, CheckCircle2, Loader2, X } from "lucide-react";
-import { uploadUserDocMetaData } from "@/lib/api/user";
 
 export default function UploadUserFileForm() {
-    const clientId = useCurrentClient((state) => state.clientId);
+    // const clientId = useCurrentClient((state) => state.clientId);
     const session = useSession();
     const queryClient = useQueryClient();
     const userId = session.data?.user.id;
@@ -71,7 +70,7 @@ export default function UploadUserFileForm() {
         mutationFn: uploadUserDocMetaData,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["documents"] });
-            queryClient.invalidateQueries({ queryKey: ["client"]});
+            queryClient.invalidateQueries({ queryKey: ["client"] });
             toast.success("Document added to client files!");
         },
         onError: () => {
@@ -80,7 +79,7 @@ export default function UploadUserFileForm() {
     })
 
     const isUploading = getUploadUrlMutation.isPending || uploadToS3Mutation.isPending || uploadFileMetaDataMutation.isPending;
-    
+
     async function onSubmit(values: UploadFileFormSchemaType) {
         try {
             if (!values.file) {
@@ -117,12 +116,15 @@ export default function UploadUserFileForm() {
                     thumbnailKey: fileExt == 'pdf' ? `users/personal/${values.year}/${uuid}-thumb.jpg` : 'public/default.jpg',
                     year: values.year
                 }
-            })        
+            })
 
             form.reset();
         } catch (err) {
-            console.log((err as any).response.data.error);
-            toast.error((err as any).response.data.error || "An error occurred during upload");
+            if (err instanceof AxiosError) {
+                toast.error(err.response?.data?.error || "An error occurred during upload");
+            } else {
+                toast.error("An unknown error occurred");
+            }
         }
     }
 
@@ -167,9 +169,9 @@ export default function UploadUserFileForm() {
                                 Financial Year
                             </FormLabel>
                             <FormControl>
-                                <Input 
-                                    placeholder="e.g., 2024-25" 
-                                    {...field} 
+                                <Input
+                                    placeholder="e.g., 2024-25"
+                                    {...field}
                                     className="h-12 border-2 border-gray-200 rounded-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all duration-200"
                                 />
                             </FormControl>
@@ -185,7 +187,7 @@ export default function UploadUserFileForm() {
                 <FormField
                     control={form.control}
                     name="file"
-                    render={({ field }) => (
+                    render={() => (
                         <FormItem>
                             <FormLabel className="flex items-center gap-2 text-sm font-semibold text-gray-700">
                                 <FileText className="w-4 h-4 text-blue-500" />
@@ -194,15 +196,14 @@ export default function UploadUserFileForm() {
                             <FormControl>
                                 <div className="space-y-4">
                                     {/* Dropzone */}
-                                    <div 
-                                        {...getRootProps()} 
-                                        className={`relative border-2 border-dashed rounded-2xl p-8 text-center transition-all duration-300 cursor-pointer ${
-                                            isDragActive 
-                                                ? 'border-blue-400 bg-blue-50' 
+                                    <div
+                                        {...getRootProps()}
+                                        className={`relative border-2 border-dashed rounded-2xl p-8 text-center transition-all duration-300 cursor-pointer ${isDragActive
+                                                ? 'border-blue-400 bg-blue-50'
                                                 : hasSelectedFile
                                                     ? 'border-green-400 bg-green-50'
                                                     : 'border-gray-300 bg-gray-50 hover:border-blue-300 hover:bg-blue-25'
-                                        } ${isUploading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                            } ${isUploading ? 'opacity-50 cursor-not-allowed' : ''}`}
                                     >
                                         <Input
                                             {...getInputProps()}
@@ -211,7 +212,7 @@ export default function UploadUserFileForm() {
                                             type="file"
                                             disabled={isUploading}
                                         />
-                                        
+
                                         <div className="space-y-4">
                                             {hasSelectedFile ? (
                                                 <div className="flex flex-col items-center gap-3">
@@ -294,8 +295,8 @@ export default function UploadUserFileForm() {
 
                 {/* Submit Button */}
                 <div className="pt-4 border-t border-gray-100">
-                    <Button 
-                        type="submit" 
+                    <Button
+                        type="submit"
                         disabled={isUploading || !hasSelectedFile}
                         className="w-full h-12 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                     >

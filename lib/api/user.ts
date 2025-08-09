@@ -1,4 +1,5 @@
-import { UserInfoResponse } from "@/types/api/user";
+// import { UserInfoResponse } from "@/types/api/user";
+import { UserInfoResponse } from "@/types/api/user.types";
 import { axiosClient } from "../utils";
 // import { signOut } from "./auth";
 
@@ -74,7 +75,8 @@ export const uploadUserDocMetaData = async ({
         const res = await axiosClient.post(`user/documents`, data);
         console.log("response from uploadDocMetaData: ", res);     
     } catch (error) {
-        console.error("Error occured while uploaing document metaData")
+        console.error("Error occured while uploaing document metaData", error)
+        throw new Error("Error occured while uploaing document metaData");
     }
     
 }

@@ -1,15 +1,17 @@
-import { clsx, type ClassValue } from "clsx"
-import { twMerge } from "tailwind-merge"
-import { auth } from '@/lib/auth';
 import axios from 'axios';
+import { clsx, type ClassValue } from "clsx";
 import { getSession } from "next-auth/react";
+import { twMerge } from "tailwind-merge";
 
 // Add Razorpay type to the Window interface
+/* eslint-disable @typescript-eslint/no-explicit-any */
 declare global {
   interface Window {
     Razorpay: any;
   }
 }
+/* eslint-enable @typescript-eslint/no-explicit-any */
+
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -43,7 +45,7 @@ export const getPlanName = (amoutn: number): string => {
 }
 
 
-export const checkOutHandler = async (amount: number, userId: string, plan: string, accessToken: string): Promise<any> => {
+export const checkOutHandler = async (amount: number, userId: string, plan: string, accessToken: string) => {
   // const session = await auth();
   // const user = session?.user;
   // console.log("session in checkout handler", session);
@@ -124,6 +126,7 @@ export const checkOutHandler = async (amount: number, userId: string, plan: stri
 export const axiosInstance = axios.create({
   baseURL: process.env.API_SERVER_BASE_URL
 });
+
 export const axiosClient = axios.create({
   baseURL: process.env.API_SERVER_BASE_URL
 });

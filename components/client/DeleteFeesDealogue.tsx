@@ -18,7 +18,7 @@ export default function DeleteFeesDialogue({ feeId, clientId }: { feeId: string,
     const [open, setOpen] = useState(false);
     const queryClient = useQueryClient();
 
-    const { mutate, status, error } = useMutation({
+    const { mutate, status } = useMutation({
         mutationFn: deleteFee,
         onMutate: () => {
             // Show loading toast when mutation starts
@@ -26,7 +26,7 @@ export default function DeleteFeesDialogue({ feeId, clientId }: { feeId: string,
                 id: `delete-fee-${feeId}` // Use unique ID per fee
             });
         },
-        onSuccess: (data) => {
+        onSuccess: () => {
             // Dismiss the loading toast and show success
             toast.dismiss(`delete-fee-${feeId}`);
             toast.success("Fee deleted successfully");

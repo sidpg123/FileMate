@@ -19,7 +19,7 @@ function Purchase() {
                         So... You Like FileMate?
                     </h1>
                     <h1 className="text-sm mx-4 text-slate-500">
-                        Now's the perfect time to go premium and unlock the real magic.
+                        Now&apos;s the perfect time to go premium and unlock the real magic.
                         
                         <br /> Free is cool. Paid is cooler. You decide.
                     </h1>

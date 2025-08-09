@@ -3,15 +3,16 @@
 import { useDebounce } from '@/hooks/useDebounce'
 import { fetchClientDocuments } from '@/lib/api/client'
 import { useInfiniteQuery } from '@tanstack/react-query'
+import { File } from 'lucide-react'
 import { useState } from 'react'
 import { Input } from '../ui/input'
 import ClientFees from './ClientFees'
 import DocCard from './DocCard'
 import UploadDialog from './UploadDialog'
-import { File, User } from 'lucide-react'
+import { FileData } from '@/types/api/user.types'
 
-const groupByYear = (docs: any[]) => {
-    const grouped: Record<string, any[]> = {};
+const groupByYear = (docs: FileData[]) => {
+    const grouped: Record<string, FileData[]> = {};
     docs.forEach(doc => {
         if (!grouped[doc.year]) {
             grouped[doc.year] = [];
@@ -40,7 +41,7 @@ export default function ClientDocs({
         hasNextPage,
         isFetching,
         isFetchingNextPage,
-        status: queryStatus
+        // status: queryStatus
     } = useInfiniteQuery({
         queryKey: ["documents", clientId, debounceSearch, debounceYear],
         queryFn: ({ pageParam = null }) =>
@@ -110,9 +111,10 @@ export default function ClientDocs({
                                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
                                     {docs.map((doc) => (
                                         <DocCard
+                                            showDropdown= {true}
                                             key={doc.id}
                                             fileName={doc.fileName}
-                                            thumbnailKey={doc.thumbnailKey}
+                                            thumbnailKey={doc.thumbnailKey!}
                                             fileKey={doc.fileKey}
                                             year={year}
                                             fileId={doc.id}

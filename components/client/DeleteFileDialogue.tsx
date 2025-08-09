@@ -17,7 +17,7 @@ export default function DeleteFileDialogue() {
     const setOpenDeleteFileDialog = useCurrentFileStore((state) => state.setOpenDeleteFileDialog);
     const queryClient = useQueryClient();
 
-    const { mutate, status, error } = useMutation({
+    const { mutate, status } = useMutation({
         mutationFn: deleteFile,
         onMutate: () => {
             // Show loading toast when mutation starts
@@ -25,7 +25,7 @@ export default function DeleteFileDialogue() {
                 id: 'delete-file' // Use a specific ID to control this toast
             });
         },
-        onSuccess: (data) => {
+        onSuccess: () => {
             // Dismiss the loading toast and show success
             toast.dismiss('delete-file');
             toast.success("File deleted successfully");

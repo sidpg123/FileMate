@@ -32,7 +32,7 @@ export default function UploadDialog() {
                                     Upload New Document
                                 </DialogTitle>
                                 <DialogDescription className="text-gray-600 text-base mt-1">
-                                    Add a new document to your client's file collection. Supported formats include PDF, images, Word documents, Excel sheets, and more.
+                                    Add a new document to your client&apos;s file collection. Supported formats include PDF, images, Word documents, Excel sheets, and more.
                                 </DialogDescription>
                             </div>
                         </div>

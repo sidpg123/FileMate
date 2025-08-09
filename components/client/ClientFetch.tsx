@@ -1,29 +1,29 @@
 "use client";
 import { fetchClientById } from "@/lib/api/client";
-import { useCurrentClient } from "@/store/store";
-import { useQuery } from "@tanstack/react-query";
-import { useEffect, useMemo, useState } from "react";
-import { Button } from "../ui/button";
-import { Card, CardContent } from "../ui/card";
-import { Badge } from "../ui/badge";
-import EditClientDialog from "./EditClientDialogue";
-import { Skeleton } from "@mui/material";
 import { formatBytes } from "@/lib/utils";
+import { useCurrentClient } from "@/store/store";
+import { Skeleton } from "@mui/material";
+import { useQuery } from "@tanstack/react-query";
 import {
-    User,
-    Phone,
-    Mail,
-    HardDrive,
-    CreditCard,
-    CheckCircle2,
     AlertCircle,
     BarChart3,
-    ChevronUp,
+    CheckCircle2,
     ChevronDown,
+    ChevronUp,
+    CreditCard,
+    HardDrive,
     IndianRupee,
+    Mail,
+    Phone,
     TrendingUp,
+    User,
     XCircle
 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Badge } from "../ui/badge";
+import { Button } from "../ui/button";
+import { Card, CardContent } from "../ui/card";
+import EditClientDialog from "./EditClientDialogue";
 
 export default function ClientFetch({
     clientId,
@@ -56,10 +56,10 @@ export default function ClientFetch({
         (state) => state
     );
 
-    const pendingFees = data?.summary?.pendingFeesAmount || 0;
+    const pendingFees = data?.summary?.totalPending + data?.summary?.totalOverdue || 0;
     const clientStatus = data?.client.status || '';
 
-    const paidFees = data?.summary?.paidFeesAmount || 0;
+    const paidFees = data?.summary?.totalReceived || 0;
     useEffect(() => {
         if (data?.client) {
             setClientId(data.client.id || "");
@@ -70,7 +70,16 @@ export default function ClientFetch({
             setStatus(data.client.status || "");
         }
         console.log("ClientFetch data: ", data);
-    }, [data]);
+    }, [
+        data,
+        pendingFees,
+        setClientId,
+        setName,
+        setEmail,
+        setPhone,
+        setPendingFees,
+        setStatus
+    ]);
 
     const formatCurrency = (amount: number) => {
         return new Intl.NumberFormat('en-IN', {
@@ -219,8 +228,8 @@ export default function ClientFetch({
                                 <CardContent className="p-4">
                                     <div className="flex items-center gap-3">
                                         <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${clientStatus?.toLowerCase() === 'active'
-                                                ? 'bg-green-100'
-                                                : 'bg-red-100'
+                                            ? 'bg-green-100'
+                                            : 'bg-red-100'
                                             }`}>
                                             {clientStatus?.toLowerCase() === 'active' ? (
                                                 <CheckCircle2 className="w-5 h-5 text-green-600" />
@@ -231,8 +240,8 @@ export default function ClientFetch({
                                         <div>
                                             <p className="text-sm text-gray-600 font-medium">Status</p>
                                             <p className={`text-lg font-bold ${clientStatus?.toLowerCase() === 'active'
-                                                    ? 'text-green-700'
-                                                    : 'text-red-700'
+                                                ? 'text-green-700'
+                                                : 'text-red-700'
                                                 }`}>
                                                 {clientStatus}
                                             </p>

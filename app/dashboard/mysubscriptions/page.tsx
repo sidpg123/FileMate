@@ -14,7 +14,7 @@ import { Separator } from '@/components/ui/separator';
 import { getSubscription } from '@/lib/api/subscription';
 import { getUserInfo } from '@/lib/api/user';
 import { useUserDetailsStore } from '@/store/store';
-import { UserInfoResponse } from '@/types/api/user';
+import { UserInfoResponse } from '@/types/api/user.types';
 import { useQuery } from '@tanstack/react-query';
 import {
   AlertCircle,
@@ -54,18 +54,6 @@ interface Subscription {
     price: string;
     features: string[];
   }
-}
-
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  passwordHash: string;
-  role: 'CA' | 'CLIENT';
-  storageUsed: bigint;
-  allocatedStorage: bigint;
-  createdAt: string;
-  clientCount?: number; // This would come from a separate query
 }
 
 type PlanType = 'ff' | '6m' | '1y';
@@ -118,8 +106,11 @@ const formatDate = (dateString: string): string => {
 const getDaysRemaining = (expiresAt: string): number => {
   const now = new Date();
   const expiry = new Date(expiresAt);
+  console.log("expiry", expiry);
   const diffTime = expiry.getTime() - now.getTime();
+  console.log("diffTime", diffTime);
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  console.log("diffDays", diffDays);
   return diffDays;
 };
 
@@ -224,7 +215,9 @@ const MySubscriptionPage: React.FC = () => {
   const allocatedStorageNum = Number(user.data.allocatedStorage);
   const storageUsedPercent = (storageUsedNum / allocatedStorageNum) * 100;
 
-  const daysRemaining = getDaysRemaining(subscription.expiresAt);   // Event handlers with proper typing
+  const daysRemaining = getDaysRemaining(subscription.expiresAt);  
+  console.log("daysRemaining", daysRemaining);
+  // Event handlers with proper typing
   // const handleUpgrade = (): void => {
   //   console.log('Upgrade plan clicked');
   //   // Navigate to upgrade page or open modal

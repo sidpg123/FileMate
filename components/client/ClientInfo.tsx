@@ -6,7 +6,7 @@ import { useCurrentClient } from '@/store/store';
 
 export default function ClientInfo() {
   // const session = useSession();
-  const {clientId, name, email , phone, pendingFees} = useCurrentClient((state => state));
+  const { name, email , phone, pendingFees} = useCurrentClient((state => state));
   if (!name && !email && !phone) {
     return <p>Updating...</p>
   }

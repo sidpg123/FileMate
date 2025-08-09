@@ -1,5 +1,4 @@
-import React from 'react';
-import { BarChart3, TrendingUp, Users, DollarSign, PieChart, Activity } from 'lucide-react';
+import { Activity, BarChart3, DollarSign, TrendingUp, Users } from 'lucide-react';
 
 export default function Analytics() {
   return (
@@ -123,7 +122,7 @@ export default function Analytics() {
           </p>
           
           <p className="text-sm md:text-base text-gray-500 leading-relaxed px-2">
-            We're building something amazing for you. Get ready to dive deep into your business insights.
+            We&apos;re building something amazing for you. Get ready to dive deep into your business insights.
           </p>
           
           <div className="mt-6 md:mt-8 flex items-center justify-center gap-2">
