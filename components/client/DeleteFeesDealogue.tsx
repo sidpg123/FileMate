@@ -50,7 +50,7 @@ export default function DeleteFeesDialogue({ feeId, clientId }: { feeId: string,
             feeId: feeId
         };
 
-        console.log("Deleting fee with data:", deleteData);
+        //console.log("Deleting fee with data:", deleteData);
         mutate(deleteData);
     };
 

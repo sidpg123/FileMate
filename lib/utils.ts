@@ -48,7 +48,7 @@ export const getPlanName = (amoutn: number): string => {
 export const checkOutHandler = async (amount: number, userId: string, plan: string, accessToken: string) => {
   // const session = await auth();
   // const user = session?.user;
-  // console.log("session in checkout handler", session);
+  // //console.log("session in checkout handler", session);
   // if (!session || !session.accessToken) {
   //   throw new Error("User is not authenticated");
   // }
@@ -61,6 +61,20 @@ export const checkOutHandler = async (amount: number, userId: string, plan: stri
 
   const expiresAt = getPlanExpiryDate(plan);
 
+  const hasActiveSubscription = await fetch(`${process.env.API_SERVER_BASE_URL}/payment/subscription/status`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${accessToken}`,
+    },
+  });
+  const hasActiveSubscriptionJson = await hasActiveSubscription.json();
+
+  if(hasActiveSubscriptionJson) {
+    alert("You already have an active subscription.");
+    return; 
+  }
+  
   const data = await fetch(`${process.env.API_SERVER_BASE_URL}/payment/getKey`, {
     method: "GET",
     headers: {
@@ -117,7 +131,7 @@ export const checkOutHandler = async (amount: number, userId: string, plan: stri
       "color": "#121212"
     }
   }
-  // console.log("window.Razorpay", window.Razorpay);
+  // //console.log("window.Razorpay", window.Razorpay);
   const rzp = new window.Razorpay(options);
   rzp.open();
 

@@ -9,15 +9,15 @@ export const getUploadUrl = async({
     contentType:string; 
     fileSize: number
 }) => {
-    console.log("received in api function: key: ", key)
-    console.log("received in api function: contentType:", contentType)
+    //console.log("received in api function: key: ", key)
+    //console.log("received in api function: contentType:", contentType)
     const res = await axiosClient.post(`/s3/upload-url`, {
         key, 
         contentType,
         fileSize
     })
 
-    console.log("AWS url: ",res);
+    //console.log("AWS url: ",res);
     return res;
 }
 
@@ -34,6 +34,6 @@ export const deleteFile = async({
         data: { key, clientId, fileId }
     });
 
-    console.log("deleteFile response: ", res.data);
+    //console.log("deleteFile response: ", res.data);
     return res.data;
 }

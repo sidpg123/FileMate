@@ -1,8 +1,7 @@
-import { auth } from "@/lib/auth";
 export default async function page() {
-  const session = await auth()
-  console.log(session)
-  console.log(session?.user.id)
+  // const session = await auth()
+  //console.log(session)
+  //console.log(session?.user.id)
   
   return (
     

@@ -8,7 +8,7 @@ import {
 
 function FAQ() {
   return (
-    <section className="min-h-screen">
+    <section id="faq" className="min-h-screen">
       <div className="text-center pt-14">
         <h1 className="text-sm tracking-widest">MANY PEOPLE ASK</h1>
         <h1 className="text-2xl tracking-wider p-3">

@@ -4,7 +4,7 @@ import { auth } from "@/lib/auth";
 
 export default async function SignUp() {
   const session = await auth(); // Get session on the server
-    console.log(session?.user);
+    //console.log(session?.user);
   
     if (session) {
       return (

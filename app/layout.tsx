@@ -13,8 +13,8 @@ const sansFont = Source_Sans_3({
 });
 
 export const metadata: Metadata = {
-  title: "Create Next App",
-  description: "Your Mental Wellness Companion",
+  title: "FileMate",
+  description: "Store Smart, Access Fast!",
 };
 
 export default function RootLayout({

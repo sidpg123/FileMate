@@ -69,7 +69,7 @@ export const fetchClientFees = async ({
 };
 
 export const createFee = async (data: CreateFeeData) => {
-  console.log("Creating Fee with data:", data)
+  //console.log("Creating Fee with data:", data)
   const res = await axiosClient.post(`/clients/${data.clientId}/fees`, {
     amount: data.amount,
     dueDate: data.dueDate,

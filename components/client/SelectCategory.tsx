@@ -53,7 +53,7 @@ export default function CategorySelector({
     }, [])
 
     const handleSelectCategory = (category: Category) => {
-        console.log("Selecting category:", category)
+        //console.log("Selecting category:", category)
         setSelectedCategory(category)
         onCategorySelect(category)
         setOpen(false)
@@ -65,9 +65,9 @@ export default function CategorySelector({
         
         try {
             setLoading(true)
-            console.log("Adding new category:", newCategory.trim())
+            //console.log("Adding new category:", newCategory.trim())
             const created = await handleAddCategory(newCategory.trim())
-            console.log("Created category:", created)
+            //console.log("Created category:", created)
             handleSelectCategory(created)
             setNewCategory("")
         } catch (err) {
@@ -133,7 +133,7 @@ export default function CategorySelector({
                                     onClick={(e) => {
                                         e.preventDefault()
                                         e.stopPropagation()
-                                        console.log("Category clicked:", category)
+                                        //console.log("Category clicked:", category)
                                         handleSelectCategory(category)
                                     }}
                                     onMouseDown={(e) => {

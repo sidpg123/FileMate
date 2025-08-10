@@ -3,7 +3,7 @@ import { auth } from "@/lib/auth";
 
 async function SignIn() {
   const session = await auth(); // Get session on the server
-  console.log(session?.user);
+  //console.log(session?.user);
 
   if (session) {
     return (

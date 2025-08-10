@@ -8,10 +8,10 @@ import { toast } from "sonner";
 
 
 async function refreshAccessToken(token: JWT) {
-  // console.log("Refreshing access token", token);
+  // //console.log("Refreshing access token", token);
   try {
 
-    // console.log("Beaarer token", `Bearer ${token.refreshToken}`);
+    // //console.log("Beaarer token", `Bearer ${token.refreshToken}`);
 
     const response = await fetch(`${process.env.API_SERVER_BASE_URL}/auth/refresh`, {
       method: "POST",
@@ -22,11 +22,11 @@ async function refreshAccessToken(token: JWT) {
       // body: JSON.stringify({ refreshToken: token.refreshToken })
     });
 
-    // console.log(response);
+    // //console.log(response);
 
     const tokens = await response.json();
 
-    // console.log(tokens);
+    // //console.log(tokens);
 
     if (!response.ok) {
       throw tokens;
@@ -66,14 +66,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         const { email, password } = credentials as { email: string; password: string };
 
-        // console.log(email + "  " + password)
+        // //console.log(email + "  " + password)
         if (!email || !password) {
           throw new Error("Invalid credentials");
         }
 
         try {
 
-          console.log(`${process.env.API_SERVER_BASE_URL}/auth/login`);
+          //console.log(`${process.env.API_SERVER_BASE_URL}/auth/login`);
           const res = await fetch(`${process.env.API_SERVER_BASE_URL}/auth/login`, {
             method: "POST",
             body: JSON.stringify({
@@ -83,26 +83,26 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             headers: { "Content-Type": "application/json" }
           });
           if (!res.ok) {
-            console.log("Response not ok", res.status, res.statusText);
+            //console.log("Response not ok", res.status, res.statusText);
             toast.error("Failed to fetch user data");
             throw new Error("Failed to fetch user data");
           }
           const parsedData = await res.json();
 
           if(parsedData.success === false) {
-            console.log("Error in credentials log in", parsedData.message);
+            //console.log("Error in credentials log in", parsedData.message);
             //throw new Error(parsedData.message || "Credentials login failed");
             // toast.error(parsedData.message || "Credentials login failed");
             return null;
           }
-          console.log("Parsed data",parsedData)
+          //console.log("Parsed data",parsedData)
           const accessToken = parsedData.accessToken
           const refreshToken = parsedData.refreshToken
           const userInfo = parsedData?.user;
           // const accessTokenExpiresIn = parsedData?.accessTokenExpiresIn;
-          // console.log("accessTokenExpiresIn", accessTokenExpiresIn);
-          console.log("UserInfo", userInfo);
-          // console.log("parsedData", parsedData);
+          // //console.log("accessTokenExpiresIn", accessTokenExpiresIn);
+          //console.log("UserInfo", userInfo);
+          // //console.log("parsedData", parsedData);
           return {
             accessToken,
             refreshToken,
@@ -132,23 +132,23 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
   callbacks: {
     signIn: async ({ user, account, profile }) => {
-      // console.log("user in signIn", user);
-      // console.log("account in signIn", account);
-      // console.log("profile in signIn", profile);
+      // //console.log("user in signIn", user);
+      // //console.log("account in signIn", account);
+      // //console.log("profile in signIn", profile);
 
       if (account?.provider === "google") {
-        // console.log("Google Sign In");
-        console.log("profile in google sign in", profile);
-        console.log("account in google sign in", account);
-        console.log("user in google sign in", user);
+        // //console.log("Google Sign In");
+        //console.log("profile in google sign in", profile);
+        //console.log("account in google sign in", account);
+        //console.log("user in google sign in", user);
 
         if (!profile || !profile.email_verified) {
-          console.log("Email not verified");
+          //console.log("Email not verified");
           throw new Error("Email not verified");
         }
 
         if (!profile.email) {
-          console.log("Email not found in profile");
+          //console.log("Email not found in profile");
           throw new Error("Email not found in profile");
         }
 
@@ -162,7 +162,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         const data = await res.json();
         if (data.success === false) {
-          console.log("Error in google login", data.message);
+          //console.log("Error in google login", data.message);
           // redirect('/signin');
           throw new Error(data.message || "Google login failed");
         }
@@ -179,7 +179,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       }
 
       if (account?.provider === "credentials") {
-        // console.log("Credentials Sign In");
+        // //console.log("Credentials Sign In");
         return true;
       }
 
@@ -190,16 +190,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
       if (token.accessToken) {
         const decodedToken = jwt.decode(token.accessToken);
-        // console.log("decodedToken", decodedToken);
+        // //console.log("decodedToken", decodedToken);
         if (decodedToken && typeof decodedToken === 'object' && 'exp' in decodedToken && typeof decodedToken.exp === 'number') {
           token.accessTokenExpiresIn = decodedToken.exp * 1000;
           if ('id' in decodedToken && typeof decodedToken.id === 'string') {
             token.id = decodedToken.id;
-            // console.log("Extracted ID from JWT:", decodedToken.id);
+            // //console.log("Extracted ID from JWT:", decodedToken.id);
           }
           if ('role' in decodedToken && typeof decodedToken.role === 'string') {
             token.role = decodedToken.role;
-            // console.log("Extracted role from JWT:", decodedToken.role);
+            // //console.log("Extracted role from JWT:", decodedToken.role);
           }
         } else {
           token.accessTokenExpiresIn = undefined;
@@ -210,10 +210,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (user) {
          if (user.databaseId) {
           token.id = user.databaseId as string; // Use database ID for Google users
-          console.log("Using database ID for Google user:", user.databaseId);
+          //console.log("Using database ID for Google user:", user.databaseId);
         } else {
           token.id = user.id as string; // Use regular ID for credential users
-          console.log("Using regular ID for credential user:", user.id);
+          //console.log("Using regular ID for credential user:", user.id);
         }
         token.role = user.role;
         // token.storageUsed = user.storageUsed;

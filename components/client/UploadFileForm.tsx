@@ -90,7 +90,7 @@ export default function UploadFileForm() {
             const uuid = uuidV4();
             const originalFileName = values.file.name;
             const fileExt = originalFileName.split(".").pop()?.toLowerCase();
-            console.log("contentType", values.file.type);
+            //console.log("contentType", values.file.type);
 
             const key = `users/${userId}/${clientId}/${values.year}/${uuid}.${fileExt}`;
 

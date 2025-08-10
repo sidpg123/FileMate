@@ -18,7 +18,7 @@ export const fetchFeesCategories = async () => {
     if (res.status != 200) {
         throw new Error("Failed to fetch fee categories");
     }
-    console.log("Fetched Fees Categories: ", res.data);
+    //console.log("Fetched Fees Categories: ", res.data);
     return res.data;
 }
 
@@ -72,8 +72,8 @@ export const uploadUserDocMetaData = async ({
     }
 }) => {
     try {
-        const res = await axiosClient.post(`user/documents`, data);
-        console.log("response from uploadDocMetaData: ", res);     
+         await axiosClient.post(`user/documents`, data);
+        //console.log("response from uploadDocMetaData: ", res);     
     } catch (error) {
         console.error("Error occured while uploaing document metaData", error)
         throw new Error("Error occured while uploaing document metaData");

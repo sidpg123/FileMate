@@ -7,7 +7,7 @@ import XIcon from "@mui/icons-material/X";
 
 export default function Footer() {
   return (
-    <section className="min-h-[60vh] max-w-[100vw] flex flex-col justify-between">
+    <section id="contact" className="min-h-[60vh] max-w-[100vw] flex flex-col justify-between">
       <footer className="md:mx-auto md:w-3/4 md:pl-5 bg-primaryLight rounded-lg pt-5 mt-auto">
         <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-6 text-center md:text-left">
           {/* About Section */}

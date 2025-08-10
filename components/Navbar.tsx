@@ -26,19 +26,14 @@ function Navbar() {
             </div>
             <div className="hidden md:block">
               <div className="ml-4 flex items-center space-x-16">
-                <Link href={"/"}>About</Link>
-                <Link href={"/"}>Contact</Link>
-                <Link href={"/"}>FAQ</Link>
-                <Link href={"/"}>Subscriptions</Link>
+                <Link href={"/#about"}>About</Link>
+                <Link href={"/#contact"}>Contact</Link>
+                <Link href={"/#faq"}>FAQ</Link>
+                <Link href={"/#purchase"}>Subscriptions</Link>
               </div>
             </div>
-            <div>
+            <div className="hidden md:inline-block">
               <HeroRedirect route="signin" title="Log in" styles="hidden md:block"/>
-              {/* <Button onClick={() => {
-                router.push('/signin')
-              }} className="hidden md:block bg-[#4A72FF] hover:bg-blue-500 shadow-md shadow-blue-600">
-                Log in
-              </Button> */}
             </div>
             <div className="md:hidden flex items-center">
               <Button
@@ -91,6 +86,8 @@ function Navbar() {
               >
                 Log in
               </Link>
+
+              <HeroRedirect route="signin" title="Log in" styles="hidden md:block"/>
             </div>
           </div>
         )}

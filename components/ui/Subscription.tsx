@@ -54,7 +54,7 @@ export default function Subscription({
         <Card className="w-full max-w-xs rounded-2xl shadow-md hover:shadow-lg transition">
             <CardHeader>
                 <div className="flex justify-start mb-2">
-                    <Image src={logo} alt="Plan logo" className=" h-12  object-contain" />
+                    <Image src={logo} alt="Plan logo" width={50} height={50} className=" h-12  object-contain" />
                 </div>
                 <CardTitle className="text-xl mt-2 ">{title}</CardTitle>
                 <CardDescription className="mb-3">{description}</CardDescription>

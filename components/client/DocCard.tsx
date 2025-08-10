@@ -66,10 +66,10 @@ const DocCard: React.FC<DocCardProps> = ({ year, fileName, thumbnailKey, fileKey
     };
   }, [thumbnailKey]);
  
-  console.log("ImageSource: ", imgSrc);
+  //console.log("ImageSource: ", imgSrc);
  
   const setDocMetaDataState = () => {
-    console.log("Setting doc metadata for:", fileName);
+    //console.log("Setting doc metadata for:", fileName);
     setName(fileName);
     setYear(year);
     setKey(extractS3Key(fileKey));
@@ -103,7 +103,8 @@ const DocCard: React.FC<DocCardProps> = ({ year, fileName, thumbnailKey, fileKey
           <Image
             src={imgSrc}
             alt="Thumbnail"
-            
+            width={100}
+            height={100}
             onLoad={() => setIsLoading(false)}
             onError={() => {
               setImgSrc(fallbackThumbnail);

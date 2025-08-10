@@ -47,7 +47,7 @@ export default function DeleteFileDialogue() {
             fileId: useCurrentFileStore.getState().fileId
         };
 
-        console.log("Deleting file with data:", deleteData);
+        //console.log("Deleting file with data:", deleteData);
 
         // Using the callback approach (recommended)
         mutate(deleteData);

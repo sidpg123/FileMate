@@ -9,8 +9,8 @@ export const handleSignUp = async ({ name, email, password }: z.infer<typeof sig
     try {
         // Validate input with Zod
         const validatedData = signUpSchema.parse({ name, email, password });
-        console.log("validatedData", validatedData);
-        console.log(typeof(name))
+        //console.log("validatedData", validatedData);
+        //console.log(typeof(name))
        //backend request to register user
         const response = await fetch(`${process.env.API_SERVER_BASE_URL}/auth/register`, {
             method: "POST",
@@ -23,7 +23,7 @@ export const handleSignUp = async ({ name, email, password }: z.infer<typeof sig
                 password: validatedData.password
             })  
         })
-        console.log("response", response);
+        //console.log("response", response);
         
 
         if(response.status === 409) {

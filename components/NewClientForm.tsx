@@ -38,8 +38,8 @@ export default function NewClientForm() {
 
     const { mutate } = useMutation({
         mutationFn: createClient,
-        onSuccess: (data) => {
-            console.log("Client created successfully:", data)
+        onSuccess: () => {
+            //console.log("Client created successfully:", data)
             // You can handle success here, like showing a toast or updating state
             queryClient.invalidateQueries({ queryKey: ['clients'] }) // Invalidate the clients list query to refetch
             queryClient.invalidateQueries({ queryKey: ['userInfo'] }) // Invalidate the clients list query to refetch
@@ -60,7 +60,7 @@ export default function NewClientForm() {
         //     data: values
         // }) // Call the mutation function with the form values
         mutate({data: values});
-        // console.log(values)
+        // //console.log(values)
         
 
         // setOpenNewUserDialog(false) // Close the dialog after submission

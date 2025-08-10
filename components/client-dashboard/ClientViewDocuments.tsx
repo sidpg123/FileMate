@@ -66,6 +66,8 @@ export default function ClientViewDocuments() {
                                 onChange={(e) => setSearch(e.target.value)}
                                 className="flex-1 min-w-[200px] h-12 pl-4 pr-4 border-2 border-gray-200 rounded-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all duration-200 bg-white shadow-sm"
                                 placeholder="Search documents..."
+                                width={100}
+                                height={100}
                             />
 
                             <Input

@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import { z } from "zod"
 
+import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import {
     Form,
@@ -25,14 +26,12 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { useCurrentClient } from "@/store/store"
-import { useSession } from "next-auth/react"
 import { EditClientFormSchema, EditClientFormSchemaType } from "@/zodSchem/cleint.schemas"
-import { Loader2 } from "lucide-react"
-import { Alert, AlertDescription } from "@/components/ui/alert"
 import { AxiosError } from "axios"
+import { Loader2 } from "lucide-react"
 
 export function EditClientForm() {
-    const session = useSession();
+    // const session = useSession();
 
     const name = useCurrentClient((state) => state.name);
     const email = useCurrentClient((state) => state.email);
@@ -55,7 +54,7 @@ export function EditClientForm() {
     const { mutate, isPending, error } = useMutation({
         mutationFn: editClientById,
         onSuccess: (data) => {
-            console.log("Client updated successfully:", data)
+            //console.log("Client updated successfully:", data)
             toast.success("Client updated successfully")
             
             queryClient.invalidateQueries({ queryKey: ['client', clientId] })
@@ -80,7 +79,7 @@ export function EditClientForm() {
     })
 
     function onSubmit(values: z.infer<typeof EditClientFormSchema>) {
-        console.log("accesstoken", session.data?.accessToken);
+        //console.log("accesstoken", session.data?.accessToken);
         mutate({
             clientId: clientId,
             data: values,

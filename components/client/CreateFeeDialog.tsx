@@ -42,7 +42,7 @@ function CreateFeeDialog({
   onOpenChange
 }: CreateFeeDialogProps) {
 
-  console.log("rendering")
+  //console.log("rendering")
 
   const [formData, setFormData] = useState({
     amount: '',
@@ -62,7 +62,7 @@ function CreateFeeDialog({
     refetchOnWindowFocus: false
   })
 
-  console.log("Fees Categories: ", feesCategories)
+  //console.log("Fees Categories: ", feesCategories)
 
   const createFeeMutation = useMutation({
     mutationFn: createFee,
@@ -119,7 +119,7 @@ function CreateFeeDialog({
       feeCategoryId: formData.categoryId,
       paymentDate: formData.status === 'Paid' ? new Date().toISOString() : undefined
     }
-    console.log("Submitting Fee Data: ", submitData)
+    //console.log("Submitting Fee Data: ", submitData)
     createFeeMutation.mutate(submitData)
   }
 
@@ -131,8 +131,8 @@ function CreateFeeDialog({
   }
 
   const handleCategorySelect = (category: FeeCategory) => {
-    console.log("Selected Category in dialog:", category)
-    console.log("Selected Category id in dialog:", category.id)
+    //console.log("Selected Category in dialog:", category)
+    //console.log("Selected Category id in dialog:", category.id)
     setSelectedCategory(category)
     handleInputChange('categoryId', category.id)
   }

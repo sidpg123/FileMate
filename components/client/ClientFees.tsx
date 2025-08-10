@@ -163,7 +163,7 @@ export default function ClientFees({
       return lastPage.hasMore ? lastPage.nextCursor : undefined;
     }
   })
-  // console.log("Fees Categories Data: ", feesCategories)
+  // //console.log("Fees Categories Data: ", feesCategories)
   const allFees = data?.pages.flatMap((group) => group.data) || []
   const groupedFees = groupFeesByStatus(allFees)
   const summary = calculateSummary(allFees)
@@ -186,7 +186,7 @@ export default function ClientFees({
       ? [...groupedFees.Pending, ...groupedFees.Overdue]
       : groupedFees.Paid
 
-  console.log("Fees  Data: ", filteredFees)
+  //console.log("Fees  Data: ", filteredFees)
   return (
     <div className=" space-y-6 pb-8">
       {/* Summary Cards */}

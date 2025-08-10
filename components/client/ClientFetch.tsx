@@ -51,7 +51,7 @@ export default function ClientFetch({
         refetchOnWindowFocus: false,
         staleTime: 1000 * 60 * 5,
     });
-    console.log("data", data);
+    //console.log("data", data);
     const { setClientId, setEmail, setName, setPhone, setPendingFees, setStatus } = useCurrentClient(
         (state) => state
     );
@@ -69,7 +69,7 @@ export default function ClientFetch({
             setPendingFees(pendingFees || 0);
             setStatus(data.client.status || "");
         }
-        console.log("ClientFetch data: ", data);
+        //console.log("ClientFetch data: ", data);
     }, [
         data,
         pendingFees,

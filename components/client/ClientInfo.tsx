@@ -11,7 +11,7 @@ export default function ClientInfo() {
     return <p>Updating...</p>
   }
 
-  // console.log("Session data: ", session);
+  // //console.log("Session data: ", session);
   return (
     <div>
       <div className="container mx-auto">

@@ -54,7 +54,7 @@ const {
   getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
 })
 
-  console.log("data", data);
+  //console.log("data", data);
   const allDocs: FileData[] = data?.pages.flatMap((group) => group.data) || [];
   // const allDocs: FileData[] = data?.pages.flatMap((group) => group.data) || [];
   const groupedDocs = groupByYear(allDocs);

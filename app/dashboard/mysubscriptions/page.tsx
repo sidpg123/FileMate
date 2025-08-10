@@ -106,11 +106,11 @@ const formatDate = (dateString: string): string => {
 const getDaysRemaining = (expiresAt: string): number => {
   const now = new Date();
   const expiry = new Date(expiresAt);
-  console.log("expiry", expiry);
+  //console.log("expiry", expiry);
   const diffTime = expiry.getTime() - now.getTime();
-  console.log("diffTime", diffTime);
+  //console.log("diffTime", diffTime);
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  console.log("diffDays", diffDays);
+  //console.log("diffDays", diffDays);
   return diffDays;
 };
 
@@ -167,7 +167,7 @@ const MySubscriptionPage: React.FC = () => {
   })
 
   if(isError) {
-    console.log(subscription)
+    //console.log(subscription)
     // toast.error(subscription.message)
     toast.error(error.message);
   }
@@ -204,8 +204,8 @@ const MySubscriptionPage: React.FC = () => {
     return <div>Error loading data</div>;
   }
 
-  console.log("Subscription: ", subscription);
-  console.log("User", user)
+  //console.log("Subscription: ", subscription);
+  //console.log("User", user)
 
   // Type-safe access to plan features
   const currentPlan: PlanFeature = planFeatures[subscription.plan?.name as PlanType];
@@ -216,27 +216,27 @@ const MySubscriptionPage: React.FC = () => {
   const storageUsedPercent = (storageUsedNum / allocatedStorageNum) * 100;
 
   const daysRemaining = getDaysRemaining(subscription.expiresAt);  
-  console.log("daysRemaining", daysRemaining);
+  //console.log("daysRemaining", daysRemaining);
   // Event handlers with proper typing
   // const handleUpgrade = (): void => {
-  //   console.log('Upgrade plan clicked');
+  //   //console.log('Upgrade plan clicked');
   //   // Navigate to upgrade page or open modal
   // };
 
   const handlePaymentHistory = (): void => {
     toast.info('Payment history feature coming soon!');
-    console.log('Payment history clicked');
+    //console.log('Payment history clicked');
     // Navigate to payment history page
   };
 
   const handleStorageAnalytics = (): void => {
     toast.info('Storage analytics feature coming soon!');
-    console.log('Storage analytics clicked');
+    //console.log('Storage analytics clicked');
     // Navigate to storage analytics page
   };
 
   // const handleContactSupport = (): void => {
-  //   console.log('Contact support clicked');
+  //   //console.log('Contact support clicked');
   //   // Open support chat or navigate to support page
   // };
 

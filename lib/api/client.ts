@@ -17,7 +17,7 @@ export const fetchClients = async ({
     sortBy?: string;
     sortOrder?: string;
 }) => {
-    console.log("sending Request to backend")
+    //console.log("sending Request to backend")
 
     const res = await axiosClient.get(`/clients`, {
         params: {
@@ -57,7 +57,7 @@ export const editClientById = async ({
     // accessToken: string;
 }) => {
     const res = await axiosClient.put(`/clients/${clientId}`, data);
-    console.log("editClientById response: ", res.data);
+    //console.log("editClientById response: ", res.data);
     return res.data;
 }
 
@@ -73,7 +73,7 @@ export const createClient = async ({
 }) => {
     const res = await axiosClient.post(`/clients`, data);
 
-    console.log("createClient response: ", res.data);
+    //console.log("createClient response: ", res.data);
     return res.data;
 }
 
@@ -90,15 +90,15 @@ export const uploadDocMetaData = async ({
     }
 }) => {
     try {
-        const res = await axiosClient.post(`clients/document`, data);
-        console.log("response from uploadDocMetaData: ", res);     
+        await axiosClient.post(`clients/document`, data);
+        //console.log("response from uploadDocMetaData: ", res);     
     } catch (err) {
         if (err instanceof AxiosError) {
                 // toast.error(err.response?.data?.error || "An error occurred during upload");
-                console.log(err)
+                //console.log(err)
             } else {
                 // toast.error("An unknown error occurred");
-                console.log(err)
+                //console.log(err)
             }
 
     }

@@ -23,14 +23,14 @@ export default function Hero({
         .replace(/^\w/, (c) => c.toUpperCase());
     
 
-    const { data, isError, error } = useQuery({
+    const { data, isError } = useQuery({
         queryKey: ["clientTotalPendingFees"],
         queryFn: getTotalPendingFees,
         refetchOnWindowFocus: false,
     })
 
     if(isError) {
-        console.log(error);
+        //console.log(error);
         toast.error("Error fetching total fees");
     }
     

@@ -15,7 +15,7 @@ export default function DeleteFileDialogue() {
     
     const handleDelete = () => {
         // Add your delete logic here
-        console.log('File deleted');
+        //console.log('File deleted');
         setOpenUpdateFileDialog(false);
     };
     

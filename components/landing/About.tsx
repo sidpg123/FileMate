@@ -20,7 +20,7 @@ const peopleImages = [
 
 export default function About() {
   return (
-    <section className="min-h-screen ">
+    <section id="about" className="min-h-screen ">
       <div className="text-center">
         <h1 className="mt-16 md:mt-0 text-sm">
           FileMate – Your trusted file management companion.
