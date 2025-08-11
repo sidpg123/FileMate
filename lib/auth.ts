@@ -1,17 +1,12 @@
+import jwt from 'jsonwebtoken';
 import NextAuth from "next-auth";
+import { JWT } from "next-auth/jwt";
 import CredentialProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
-import jwt from 'jsonwebtoken'
-import { JWT } from "next-auth/jwt";
-import { toast } from "sonner";
-// import { redirect } from "next/navigation";
-
 
 async function refreshAccessToken(token: JWT) {
-  // //console.log("Refreshing access token", token);
   try {
-
-    // //console.log("Beaarer token", `Bearer ${token.refreshToken}`);
+    console.log("Attempting to refresh token for user:", token.id, "at ", Date.now());
 
     const response = await fetch(`${process.env.API_SERVER_BASE_URL}/auth/refresh`, {
       method: "POST",
@@ -19,27 +14,26 @@ async function refreshAccessToken(token: JWT) {
         "Authorization": `Bearer ${token.refreshToken}`,
         "Content-Type": "application/json"
       },
-      // body: JSON.stringify({ refreshToken: token.refreshToken })
     });
 
-    // //console.log(response);
-
     const tokens = await response.json();
-
-    // //console.log(tokens);
+    // console.log("Refresh response status:", response.status);
 
     if (!response.ok) {
-      throw tokens;
+      console.error("Token refresh failed:", tokens);
+      throw new Error(tokens.message || "Token refresh failed");
     }
 
+    console.log("Token refreshed successfully");
     return {
       ...token,
       accessToken: tokens.accessToken,
-      refreshToken: tokens.refreshToken ?? token.refreshToken, // Fall back to old refresh token
+      refreshToken: tokens.refreshToken ?? token.refreshToken,
+      accessTokenExpiresIn: undefined, // Will be recalculated from new token
+      error: undefined, // Clear any previous errors
     };
   } catch (error) {
-    console.log(error);
-
+    console.error("Token refresh error:", error);
     return {
       ...token,
       error: "RefreshAccessTokenError",
@@ -47,13 +41,11 @@ async function refreshAccessToken(token: JWT) {
   }
 }
 
-
-
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!
     }),
 
     CredentialProvider({
@@ -63,200 +55,157 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         password: { label: "Password", type: "password", placeholder: "password", required: true }
       },
       async authorize(credentials) {
-
         const { email, password } = credentials as { email: string; password: string };
 
-        // //console.log(email + "  " + password)
         if (!email || !password) {
-          throw new Error("Invalid credentials");
+          console.error("Missing email or password");
+          return null;
         }
 
         try {
-
-          //console.log(`${process.env.API_SERVER_BASE_URL}/auth/login`);
           const res = await fetch(`${process.env.API_SERVER_BASE_URL}/auth/login`, {
             method: "POST",
-            body: JSON.stringify({
-              email: email,
-              password: password
-            }),
+            body: JSON.stringify({ email, password }),
             headers: { "Content-Type": "application/json" }
           });
-          if (!res.ok) {
-            //console.log("Response not ok", res.status, res.statusText);
-            toast.error("Failed to fetch user data");
-            throw new Error("Failed to fetch user data");
-          }
-          const parsedData = await res.json();
 
-          if(parsedData.success === false) {
-            //console.log("Error in credentials log in", parsedData.message);
-            //throw new Error(parsedData.message || "Credentials login failed");
-            // toast.error(parsedData.message || "Credentials login failed");
+          if (!res.ok) {
+            console.error("Login request failed:", res.status, res.statusText);
             return null;
           }
-          //console.log("Parsed data",parsedData)
-          const accessToken = parsedData.accessToken
-          const refreshToken = parsedData.refreshToken
-          const userInfo = parsedData?.user;
-          // const accessTokenExpiresIn = parsedData?.accessTokenExpiresIn;
-          // //console.log("accessTokenExpiresIn", accessTokenExpiresIn);
-          //console.log("UserInfo", userInfo);
-          // //console.log("parsedData", parsedData);
-          return {
-            accessToken,
-            refreshToken,
-            // accessTokenExpiresIn,
-            id: userInfo.id,
-            name: userInfo.name,
-            // storageUsed: userInfo.storageUsed,
-            subscriptionExpiry: userInfo.subscriptionExpiry,
-            role: userInfo?.role,
-            // email: userInfo?.email
+
+          const parsedData = await res.json();
+
+          if (parsedData.success === false) {
+            console.error("Login failed:", parsedData.message);
+            return null;
           }
 
+          const userInfo = parsedData.user;
+          return {
+            id: userInfo.id,
+            name: userInfo.name,
+            email: userInfo.email,
+            role: userInfo.role,
+            accessToken: parsedData.accessToken,
+            refreshToken: parsedData.refreshToken,
+            // subscriptionExpiry: userInfo.subscriptionExpiry,
+          };
+
         } catch (error) {
-          console.log(error)
-          throw new Error(`Authorization error`);
+          console.error("Authorization error:", error);
+          return null;
         }
       }
     })
   ],
 
   session: {
-    strategy: "jwt"
+    strategy: "jwt",
+    maxAge: 7 * 24 * 60 * 60, // 7 days to match refresh token
   },
 
   pages: {
-    signIn: '/signin'
+    signIn: '/signin',
+    error: '/signin'
   },
+
   callbacks: {
     signIn: async ({ user, account, profile }) => {
-      // //console.log("user in signIn", user);
-      // //console.log("account in signIn", account);
-      // //console.log("profile in signIn", profile);
-
       if (account?.provider === "google") {
-        // //console.log("Google Sign In");
-        //console.log("profile in google sign in", profile);
-        //console.log("account in google sign in", account);
-        //console.log("user in google sign in", user);
-
-        if (!profile || !profile.email_verified) {
-          //console.log("Email not verified");
-          throw new Error("Email not verified");
+        if (!profile?.email_verified || !profile?.email) {
+          console.error("Google profile verification failed");
+          return false; // This will trigger an error
         }
 
-        if (!profile.email) {
-          //console.log("Email not found in profile");
-          throw new Error("Email not found in profile");
-        }
+        try {
+          const res = await fetch(`${process.env.API_SERVER_BASE_URL}/auth/google-login`, {
+            method: "POST",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: profile.email }),
+          });
 
-        const res = await fetch(`${process.env.API_SERVER_BASE_URL}/auth/google-login`, {
-          method: "POST",
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ email: profile.email }),
-        });
+          const data = await res.json();
+          
+          if (!res.ok || data.success === false) {
+            console.error("Google login failed:", data.message);
+            // Store error details for the error page
+            const error = new Error("GoogleLoginFailed");
+            error.cause = {
+              message: data.message || 'Account not found',
+              statusCode: res.status
+            };
+            throw error;
+          }
 
-        const data = await res.json();
-        if (data.success === false) {
-          //console.log("Error in google login", data.message);
-          // redirect('/signin');
-          throw new Error(data.message || "Google login failed");
-        }
-        else {
+          // Set user data from backend response
+          user.id = data.user.id;
+          user.name = data.user.name;
+          user.email = data.user.email;
+          user.role = data.user.role;
           user.accessToken = data.accessToken;
-          user.databaseId = data.id;
           user.refreshToken = data.refreshToken;
-          user.role = data.role;
-          // user.subscriptionExpiry = data.subscriptionExpiry;
-          user.id = data.id;
-        }
 
-        return true;
+          return true;
+        } catch (error) {
+          console.error("Google login error:", error);
+          // Re-throw the error to be handled by NextAuth's error handling
+          throw error;
+        }
       }
 
       if (account?.provider === "credentials") {
-        // //console.log("Credentials Sign In");
-        return true;
+        return user ? true : false;
       }
 
-      return false; // Reject sign-in for other providers
+      return false;
     },
-    jwt: async ({ token, user }) => {
 
-
-      if (token.accessToken) {
-        const decodedToken = jwt.decode(token.accessToken);
-        // //console.log("decodedToken", decodedToken);
-        if (decodedToken && typeof decodedToken === 'object' && 'exp' in decodedToken && typeof decodedToken.exp === 'number') {
-          token.accessTokenExpiresIn = decodedToken.exp * 1000;
-          if ('id' in decodedToken && typeof decodedToken.id === 'string') {
-            token.id = decodedToken.id;
-            // //console.log("Extracted ID from JWT:", decodedToken.id);
-          }
-          if ('role' in decodedToken && typeof decodedToken.role === 'string') {
-            token.role = decodedToken.role;
-            // //console.log("Extracted role from JWT:", decodedToken.role);
-          }
-        } else {
-          token.accessTokenExpiresIn = undefined;
-        }
-      }
-
-
+    jwt: async ({ token, user, trigger }) => {
+      // Handle new sign-ins
       if (user) {
-         if (user.databaseId) {
-          token.id = user.databaseId as string; // Use database ID for Google users
-          //console.log("Using database ID for Google user:", user.databaseId);
-        } else {
-          token.id = user.id as string; // Use regular ID for credential users
-          //console.log("Using regular ID for credential user:", user.id);
-        }
+        token.id = user.id!;
         token.role = user.role;
-        // token.storageUsed = user.storageUsed;
-        // token.subscriptionExpiry = user.subscriptionExpiry;
         token.accessToken = user.accessToken;
-        token.accessTokenExpiresIn = user.accessTokenExpiresIn; // Ensure this is set
-        token.refreshToken = user.refreshToken; 
-        return token;
+        token.refreshToken = user.refreshToken;
+        token.error = undefined;
       }
 
-
-
-      if (Date.now() < token.accessTokenExpiresIn!) {
-        return token;
+      // Calculate expiration time from current access token
+      if (token.accessToken && !token.accessTokenExpiresIn) {
+        try {
+          const decodedToken = jwt.decode(token.accessToken) as jwt.JwtPayload;
+          if (decodedToken?.exp) {
+            token.accessTokenExpiresIn = decodedToken.exp * 1000;
+          }
+        } catch (error) {
+          console.error("Error decoding access token:", error);
+        }
       }
 
-      return refreshAccessToken(token);
+      // Handle token refresh
+      if (token.accessTokenExpiresIn && Date.now() >= token.accessTokenExpiresIn - 60000) { // Refresh 1 minute before expiry
+        console.log("Token expired, refreshing...");
+        return await refreshAccessToken(token);
+      }
 
+      // Handle manual refresh triggers
+      if (trigger === "update" && token.error === "RefreshAccessTokenError") {
+        return await refreshAccessToken(token);
+      }
+
+      return token;
     },
+
     session: async ({ session, token }) => {
 
-      if (token) {
-        session.user.id = token.id as string;
-        session.user.role = token.role as string | undefined;
-        session.accessToken = token.accessToken as string;
-        session.accessTokenExpiresIn = token.accessTokenExpiresIn as number | undefined;
-        session.refreshToken = token.refreshToken as string;
-          // session.user.storageUsed = token.storageUsed as number | undefined;
-      }
-      
-        return session;
+      session.user.id = token.id as string;
+      session.user.role = token.role as string;
+      session.accessToken = token.accessToken as string;
+      session.refreshToken = token.refreshToken as string;
+      session.accessTokenExpiresIn = token.accessTokenExpiresIn as number;
 
+      return session;
     },
-
-    // redirect: async ({ url, baseUrl }) => {
-    //   const session = await auth();
-    //   if(!session?.user.id) {
-    //     return baseUrl;
-    //   }
-    //   if (session.user.role === 'user') return `${baseUrl}/dashboard`;
-    //   if (session.user.role === 'user') return `${baseUrl}/admin`;
-    //   if (session.user.role === 'client') return `${baseUrl}/dashboard`;
-    //   return baseUrl;
-    // }
   }
-})
+});

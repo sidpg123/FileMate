@@ -65,16 +65,6 @@ export default function SignUpForm() {
     }
   };
 
-  // const handleGoogleSignUp = async () => {
-  //   setGoogleLoading(true);
-  //   try {
-  //     await handleGoogleSignUp( );
-  //   } catch (error) {
-  //     console.error("Google sign-up failed", error);
-  //     toast.error("Google sign-up failed");
-  //     setGoogleLoading(false);
-  //   }
-  // };
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4">

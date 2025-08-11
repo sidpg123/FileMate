@@ -24,7 +24,7 @@ type SubscriptionProps = {
     description: string;
     amount: amount;
     buttonText: string;
-    checkoutHandler: (amount: number, userId: string, plan: string, accessToken: string) => void;
+    checkoutHandler: (amount: number, userId: string, plan: string, accessToken: string, role: string) => void;
     buttonStyle?: string;
     featureList: string[];
 };
@@ -77,7 +77,7 @@ export default function Subscription({
                             return;
                         }
 
-                        checkoutHandler(amount.value, userId, plan, accessToken);
+                        checkoutHandler(amount.value, userId, plan, accessToken, session.user.role!);
                     }}
                     className={buttonStyle ? buttonStyle : "w-full"}
                 >

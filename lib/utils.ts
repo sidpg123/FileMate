@@ -45,13 +45,17 @@ export const getPlanName = (amoutn: number): string => {
 }
 
 
-export const checkOutHandler = async (amount: number, userId: string, plan: string, accessToken: string) => {
+export const checkOutHandler = async (amount: number, userId: string, plan: string, accessToken: string, role: string) => {
   // const session = await auth();
   // const user = session?.user;
   // //console.log("session in checkout handler", session);
   // if (!session || !session.accessToken) {
   //   throw new Error("User is not authenticated");
   // }
+  if(role !== 'CA') {
+    alert("Your email is already registered. Please contact support to make subscription.")
+    return;
+  }
   if (!amount || !userId || !plan) {
     throw new Error("Amount, userId, expiresAt, and plan are required");
   }
@@ -69,8 +73,8 @@ export const checkOutHandler = async (amount: number, userId: string, plan: stri
     },
   });
   const hasActiveSubscriptionJson = await hasActiveSubscription.json();
-
-  if(hasActiveSubscriptionJson) {
+  // console.log("hasActiveSubscription", hasActiveSubscriptionJson)
+  if(hasActiveSubscriptionJson === true) {
     alert("You already have an active subscription.");
     return; 
   }

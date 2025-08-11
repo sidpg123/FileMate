@@ -6,7 +6,7 @@ export default async function SignUp() {
   const session = await auth(); // Get session on the server
     //console.log(session?.user);
   
-    if (session) {
+    if (session?.user) {
       return (
         <div className="flex min-h-screen items-center justify-center">
           <p className="text-lg">You are already signed in.</p>
