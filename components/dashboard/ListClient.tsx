@@ -16,6 +16,7 @@ import {
 } from 'lucide-react'
 import { useState } from 'react'
 import ClientCard from '../../components/dashboard/ClientCard'
+import NewClientDialog from '../NewClientDialog'
 
 function ListClient() {
 
@@ -66,7 +67,7 @@ function ListClient() {
   return (
     <div className="mt-5 space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-2">
           <Users className="h-6 w-6 text-blue-600" />
           <h1 className="text-2xl font-bold text-gray-900">Clients</h1>
@@ -75,6 +76,9 @@ function ListClient() {
               {totalClients}
             </span>
           )}
+        </div>
+        <div className="md:hidden">
+          <NewClientDialog />
         </div>
       </div>
 

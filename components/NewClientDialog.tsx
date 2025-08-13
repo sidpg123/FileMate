@@ -20,7 +20,7 @@ function NewClientDialog() {
         <Dialog open={openNewUserDialog} onOpenChange={setOpenNewUserDialog}>
             <DialogTrigger asChild >
                 <Button onClick={() => {;
-                }} className="hidden md:block bg-[#4A72FF] hover:bg-blue-500 shadow-lg shadow-blue-500">
+                }} className=" bg-[#4A72FF] hover:bg-blue-500 shadow-lg shadow-blue-500">
                     New Client +
                 </Button>
             </DialogTrigger>
