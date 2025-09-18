@@ -30,7 +30,7 @@ declare module "next-auth/jwt" {
     role?: string;
     subscriptionExpiry?: Date;
     accessTokenExpiresIn?: number; // in milliseconds
-    accessToken: string;
-    refreshToken: string;
+    accessToken?: string;
+    refreshToken?: string;
   }
 }

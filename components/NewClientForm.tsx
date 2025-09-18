@@ -47,7 +47,7 @@ export default function NewClientForm() {
             toast.success("Client created successfully");
         },
         onError: (error) => {
-            console.error("Error creating client:", error)
+            // console.error("Error creating client:", error)
             if(error instanceof AxiosError){
                 toast.error(error.response?.data.message || "Failed to create client")
             }

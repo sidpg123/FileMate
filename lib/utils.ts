@@ -46,12 +46,7 @@ export const getPlanName = (amoutn: number): string => {
 
 
 export const checkOutHandler = async (amount: number, userId: string, plan: string, accessToken: string, role: string) => {
-  // const session = await auth();
-  // const user = session?.user;
-  // //console.log("session in checkout handler", session);
-  // if (!session || !session.accessToken) {
-  //   throw new Error("User is not authenticated");
-  // }
+
   if(role !== 'CA') {
     alert("Your email is already registered. Please contact support to make subscription.")
     return;
@@ -73,8 +68,8 @@ export const checkOutHandler = async (amount: number, userId: string, plan: stri
     },
   });
   const hasActiveSubscriptionJson = await hasActiveSubscription.json();
-  // console.log("hasActiveSubscription", hasActiveSubscriptionJson)
-  if(hasActiveSubscriptionJson === true) {
+  // console.log("hasActiveSubscription", hasActiveSubsdcriptionJson)
+  if(hasActiveSubscriptionJson.hasActiveSubscription === true) {
     alert("You already have an active subscription.");
     return; 
   }

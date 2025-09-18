@@ -87,11 +87,11 @@ const planFeatures: Record<PlanType, PlanFeature> = {
 const formatBytes = (bytes: bigint | number): string => {
   const numBytes = typeof bytes === 'bigint' ? Number(bytes) : bytes;
   if (numBytes === 0) return '0 Bytes';
-  
+
   const k = 1024;
   const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
   const i = Math.floor(Math.log(numBytes) / Math.log(k));
-  
+
   return parseFloat((numBytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 };
 
@@ -151,8 +151,8 @@ const getStatusBadge = (status: SubscriptionStatus): React.ReactNode => {
 
 const MySubscriptionPage: React.FC = () => {
   const currentUserEmail = useUserDetailsStore((state) => state.email);
-  
-  const {data: subscription, status: subscriptionStatus, isError, error} = useQuery<Subscription>({
+
+  const { data: subscription, status: subscriptionStatus, isError, error } = useQuery<Subscription>({
     queryKey: ['subscription'],
     queryFn: async () => {
       const res = await getSubscription();
@@ -161,12 +161,12 @@ const MySubscriptionPage: React.FC = () => {
         throw new Error('No subscription data found');
       }
       return res;
-      
+
     },
     refetchOnWindowFocus: false
   })
 
-  if(isError) {
+  if (isError) {
     //console.log(subscription)
     // toast.error(subscription.message)
     toast.error(error.message);
@@ -214,8 +214,9 @@ const MySubscriptionPage: React.FC = () => {
   const storageUsedNum = Number(user.data.storageUsed);
   const allocatedStorageNum = Number(user.data.allocatedStorage);
   const storageUsedPercent = (storageUsedNum / allocatedStorageNum) * 100;
+  const totalClientsPercent = Math.min((user?.data.totalClients || 0) / (10) * 100, 100)
 
-  const daysRemaining = getDaysRemaining(subscription.expiresAt);  
+  const daysRemaining = getDaysRemaining(subscription.expiresAt);
   //console.log("daysRemaining", daysRemaining);
   // Event handlers with proper typing
   // const handleUpgrade = (): void => {
@@ -245,7 +246,7 @@ const MySubscriptionPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br mb-10">
       <div className="max-w-7xl mx-auto space-y-8">
-        
+
         {/* Header */}
         <div className="text-center space-y-4 mt-5">
           <h1 className="text-4xl font-bold text-slate-800">My Subscription</h1>
@@ -276,10 +277,10 @@ const MySubscriptionPage: React.FC = () => {
             </div>
           </CardHeader>
           <CardContent className="space-y-6">
-            
+
             {/* Usage Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              
+
               {/* Storage Usage */}
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
@@ -306,10 +307,17 @@ const MySubscriptionPage: React.FC = () => {
                   </div>
                   <span className="text-sm text-slate-600">{user?.data.totalClients || 0}</span>
                 </div>
-                <div className="h-2 bg-slate-200 rounded-full">
-                  <div className="h-2 bg-blue-500 rounded-full w-full"></div>
-                </div>
-                <p className="text-xs text-slate-500">Unlimited clients supported</p>
+                {
+                  subscription.plan.name === 'ff' ?
+                    <Progress value={totalClientsPercent} className="h-2" />
+                    :
+                    <div className="h-2 bg-slate-200 rounded-full">
+                      <div className="h-2 bg-blue-500 rounded-full w-full"></div>
+                    </div>
+                }
+                <p className="text-xs text-slate-500">
+                  {subscription?.plan.name === 'ff' ? 'Max 10 clients allowed on Forever Free plan' : 'Unlimited clients supported'}
+                </p>
               </div>
 
               {/* Plan Duration */}
@@ -322,10 +330,10 @@ const MySubscriptionPage: React.FC = () => {
                   <span className="text-sm text-slate-600">Annual</span>
                 </div>
                 <div className="h-2 bg-slate-200 rounded-full">
-                  <div 
+                  <div
                     className="h-2 bg-green-500 rounded-full transition-all duration-300"
-                    style={{ 
-                      width: `${Math.max(5, Math.min(95, (365 - daysRemaining) / 365 * 100))}%` 
+                    style={{
+                      width: `${Math.max(5, Math.min(95, (365 - daysRemaining) / 365 * 100))}%`
                     }}
                   ></div>
                 </div>
@@ -338,7 +346,7 @@ const MySubscriptionPage: React.FC = () => {
         </Card>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          
+
           {/* Plan Features */}
           <Card className="lg:col-span-2 shadow-lg">
             <CardHeader>
@@ -369,26 +377,26 @@ const MySubscriptionPage: React.FC = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-             
+
               <Button variant="outline" className="w-full text-white bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800" onClick={handlePaymentHistory}>
                 <CreditCard className="h-4 w-4 mr-2" />
                 Payment History
               </Button>
-              
+
               <Button variant="outline" className="w-full" onClick={handleStorageAnalytics}>
                 <HardDrive className="h-4 w-4 mr-2" />
                 Analytics
               </Button>
-              
+
               <Separator />
-              
+
               <div className="space-y-2">
                 <p className="text-xs text-slate-600 font-medium">SUBSCRIPTION ID</p>
                 <p className="text-xs text-slate-500 font-mono bg-slate-100 p-2 rounded">
                   {subscription!.id}
                 </p>
               </div>
-              
+
               {subscription!.razorpay_payment_id && (
                 <div className="space-y-2">
                   <p className="text-xs text-slate-600 font-medium">LAST PAYMENT ID</p>
@@ -417,21 +425,21 @@ const MySubscriptionPage: React.FC = () => {
                 <p className="text-lg font-semibold text-slate-900">{subscription?.plan.displayName}</p>
                 <p className="text-sm text-slate-600">{subscription?.plan.price}/year</p>
               </div>
-              
+
               <div className="space-y-2">
                 <p className="text-sm font-medium text-slate-700">Next Billing Date</p>
                 <p className="text-lg font-semibold text-slate-900">{formatDate(subscription!.expiresAt)}</p>
-                <p className="text-sm text-slate-600">
+                {/* <p className="text-sm text-slate-600">
                   Auto-renewal {subscription!.status === 'active' ? 'enabled' : 'disabled'}
-                </p>
+                </p> */}
               </div>
-              
+
               <div className="space-y-2">
                 <p className="text-sm font-medium text-slate-700">Account Email</p>
                 <p className="text-lg font-semibold text-slate-900">{currentUserEmail}</p>
                 <p className="text-sm text-slate-600">Billing notifications sent here</p>
               </div>
-              
+
               <div className="space-y-2">
                 <p className="text-sm font-medium text-slate-700">Subscription Status</p>
                 <div className="flex items-center space-x-2">
@@ -444,7 +452,7 @@ const MySubscriptionPage: React.FC = () => {
         </Card>
 
         {/* Support Section */}
-        {/* <Card className="bg-gradient-to-r from-blue-50 to-purple-50 border-blue-200 shadow-lg">
+        <Card className="bg-gradient-to-r from-blue-50 to-purple-50 border-blue-200 shadow-lg">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div className="space-y-2">
@@ -453,12 +461,12 @@ const MySubscriptionPage: React.FC = () => {
                   Our support team is here to assist you with any questions about your subscription.
                 </p>
               </div>
-              <Button className="bg-blue-600 hover:bg-blue-700" onClick={handleContactSupport}>
+              <Button className="bg-blue-600 hover:bg-blue-700" >
                 Contact Support
               </Button>
             </div>
           </CardContent>
-        </Card> */}
+        </Card>
       </div>
     </div>
   );

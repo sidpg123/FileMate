@@ -6,6 +6,7 @@ import DocCard from '../client/DocCard';
 import { fetchClientDocuments } from '@/lib/api/client-dashboard';
 import { File } from 'lucide-react';
 import { FileData } from '@/types/api/user.types';
+import { AxiosError } from 'axios';
 
 
 const groupByYear = (docs: FileData[]) => {
@@ -36,6 +37,7 @@ export default function ClientViewDocuments() {
         isFetching,
         isFetchingNextPage,
         // status: queryStatus
+        error
     } = useInfiniteQuery({
         queryKey: ["documents", debounceSearch, debounceYear],
         queryFn: ({ pageParam = null }) =>
@@ -50,7 +52,24 @@ export default function ClientViewDocuments() {
         getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
         // enabled: view === 'documents' // Only fetch documents when documents view is active
     })
+    if (error) {
+        // if ()
+        console.error("Error in documents'", error);
+        if(error instanceof AxiosError) {
+            console.log("Error code",error.response?.data.error)
+            if(error.response?.data.error === 'INACTIVE_USER') {
+                return <div className='text-center mt-13'> Your access is blocked. Contact your CA for more information.</div>
+            }
+        }
+        return <div className="text-center text-red-500 mt-24">Failed to load documents. Please try again later.</div>;
+    }
+    
+    if(data?.pages[0].error === 'INACTIVE_USER') {
+        return <div className='text-center mt-13'> Your access is blocked. Contact your CA for more information.</div>
 
+    }
+    console.log("data in documents", data?.pages[0].error);
+    
     const allDocs = data?.pages.flatMap((group) => group.data) || [];
     const groupedDocs = groupByYear(allDocs);
 
@@ -135,6 +154,8 @@ export default function ClientViewDocuments() {
                     {/* <p className="text-sm">Try adjusting your search or upload new documents.</p> */}
                 </div>
             )}
+
+
         </>
     )
 }

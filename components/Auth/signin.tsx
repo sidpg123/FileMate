@@ -47,7 +47,9 @@ export default function SignInForm() {
     useEffect(() => {
         const error = searchParams.get('error');
         const message = searchParams.get('message');
-
+        console.log("URL error:", error);
+        console.log("URL message:", message);
+        
         if (error) {
             let errorMessage = 'Authentication failed';
 
@@ -80,24 +82,36 @@ export default function SignInForm() {
                     errorMessage = message ? decodeURIComponent(message) : 'Authentication failed. Please try again.';
             }
 
-            toast.error(errorMessage);
+            console.log("Showing toast for error:", errorMessage);
+            
+            // Add a small delay to ensure the component is mounted
+            setTimeout(() => {
+                toast.error(errorMessage);
+            }, 100);
 
             // Clean the URL by replacing the current state
-            router.replace('/signin');
+            setTimeout(() => {
+                router.replace('/signin');
+            }, 3000); // Reduced delay
         }
     }, [searchParams, router]);
 
     const onSubmit = async (values: z.infer<typeof signInSchema>) => {
+        console.log("Form submitted with values:", { email: values.email, password: "***" });
         setLoading(true);
 
         try {
             const result = await signIn("credentials", {
                 email: values.email,
                 password: values.password,
-                // redirect: false, // Important: prevent automatic redirect
+                redirect: false, // CRITICAL: Keep this false to handle errors manually
             });
+            
+            console.log("SignIn result:", result);
 
             if (result?.error) {
+                console.log("SignIn error detected:", result.error);
+                
                 // Handle different error types
                 let errorMessage = 'Sign-in failed';
 
@@ -112,15 +126,19 @@ export default function SignInForm() {
                         errorMessage = 'Server configuration error. Please try again.';
                         break;
                     default:
-                        errorMessage = 'Sign-in failed. Please try again.';
+                        errorMessage = result.error || 'Sign-in failed. Please try again.';
                 }
 
+                console.log("Showing toast error:", errorMessage);
                 toast.error(errorMessage);
+                
             } else if (result?.ok) {
+                console.log("SignIn successful");
                 toast.success("Sign-in successful!");
 
                 // Get the session to determine redirect path
                 const session = await getSession();
+                
                 if (session?.user?.role === 'admin') {
                     router.push('/admin');
                 } else if (session?.user?.role === 'client') {
@@ -128,9 +146,13 @@ export default function SignInForm() {
                 } else {
                     router.push('/');
                 }
+            } else {
+                // This case handles when result is neither error nor ok
+                console.log("Unexpected result state:", result);
+                toast.error("Something went wrong. Please try again.");
             }
         } catch (error) {
-            console.error("Sign-in failed", error);
+            console.error("Sign-in exception:", error);
             toast.error("An unexpected error occurred. Please try again.");
         } finally {
             setLoading(false);
@@ -138,27 +160,37 @@ export default function SignInForm() {
     };
 
     const handleGoogleSignIn = async () => {
+        console.log("Google sign-in initiated");
         setGoogleLoading(true);
 
         try {
-            // Use redirect: true to let NextAuth handle the full OAuth flow
-            // This will automatically redirect to the error page with proper error handling
-            await signIn("google", {
-                redirect: true,
-                // callbackUrl: '/auth/callback' // Optional: specify a callback URL
+            // For debugging, you might want to use redirect: false first
+            const result = await signIn("google", {
+                redirect: true, // Change this to false for debugging
+                // callbackUrl: '/auth/callback'
             });
+
+            console.log("Google signin result:", result);
+
+            if (result?.error) {
+                console.log("Google signin error:", result.error);
+                toast.error("Google sign-in failed. Please try again.");
+                setGoogleLoading(false);
+            } else if (result?.ok) {
+                toast.success("Google sign-in successful!");
+                // Handle redirect manually if needed
+            }
+            
         } catch (error) {
-            console.error("Google sign-in initiation failed", error);
+            console.error("Google sign-in exception:", error);
             toast.error("Failed to start Google sign-in. Please try again.");
             setGoogleLoading(false);
         }
-        // Note: Don't set loading to false here if redirect: true, 
-        // as the page will redirect and loading state won't matter
     };
-
 
     return (
         <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
+            
             <Card className="w-full sm:w-4/5 md:w-3/6 lg:w-1/3 shadow-lg">
                 <CardHeader className="space-y-1">
                     <CardTitle className="text-2xl font-bold text-center">Welcome Back</CardTitle>

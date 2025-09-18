@@ -196,9 +196,9 @@ function Navbar() {
                   </div>
 
                   <div className="space-y-3">
-                    <div onClick={() => setIsClick(false)}>
+                    {/* <div onClick={() => setIsClick(false)}>
                       <NewClientDialog />
-                    </div>
+                    </div> */}
 
                     <Button
                       onClick={handleSignOut}

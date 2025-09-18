@@ -34,6 +34,15 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL("/client-dashboard", req.url));
   }
 
+    if (pathname === "/signup" && session?.user.role === "CA") {
+    // If the user is already authenticated and trying to access the sign-in page, redirect them to the dashboard
+    return NextResponse.redirect(new URL("/dashboard", req.url));
+  }
+
+  if(pathname === "/signup" && session?.user.role === "Client") {
+    // If the user is already authenticated as a Client and trying to access the sign-in page, redirect them to the client-dashboard
+    return NextResponse.redirect(new URL("/client-dashboard", req.url));
+  }
 
   // Block non-clients from client-dashboard
   if (pathname.startsWith("/client-dashboard") && session?.user?.role !== "Client") {
