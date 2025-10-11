@@ -13,11 +13,11 @@ export default function Footer() {
           {/* About Section */}
           <div>
             <h3 className="text-lg  ">
-              <span className="gradient-text">FileMate</span> - Secure Document
+              <span className="gradient-text">filesmate</span> - Secure Document
               Management
             </h3>
             <p className="mt-2 text-sm text-darkLight">
-              FileMate helps professionals securely manage and share documents
+              filesmate helps professionals securely manage and share documents
               with clients, offering features like client-specific access,
               tracking, and notifications.
             </p>
@@ -27,31 +27,7 @@ export default function Footer() {
           <div>
             <h3 className="text-lg ">Quick Links</h3>
             <ul className="mt-2 text-darkLight  text-sm space-y-2">
-              <li>
-                <Link href="/" className="hover:text-blue-400">
-                  Home
-                </Link>
-              </li>
-              <li>
-                <Link href="/features" className="hover:text-blue-400">
-                  Features
-                </Link>
-              </li>
-              <li>
-                <Link href="/pricing" className="hover:text-blue-400">
-                  Pricing
-                </Link>
-              </li>
-              <li>
-                <Link href="/faqs" className="hover:text-blue-400">
-                  FAQs
-                </Link>
-              </li>
-              <li>
-                <Link href="/contact" className="hover:text-blue-400">
-                  Contact Us
-                </Link>
-              </li>
+cd 
             </ul>
           </div>
 
@@ -93,7 +69,7 @@ export default function Footer() {
 
         {/* Copyright */}
         <div className="mt-8 text-center text-sm text-gray-500">
-          © {new Date().getFullYear()} FileMate. All Rights Reserved.
+          © {new Date().getFullYear()} filesmate. All Rights Reserved.
         </div>
       </footer>
     </section>

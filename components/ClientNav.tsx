@@ -70,7 +70,7 @@ function NavbarComponent() {
                   <span className="text-white font-bold text-sm">FM</span>
                 </div>
                 <span className="font-bold text-xl bg-gradient-to-r from-[#4A72FF] via-[#5C53D1] to-[#712D99] bg-clip-text text-transparent">
-                  FileMate
+                  filesmate
                 </span>
               </Link>
             </div>
@@ -183,7 +183,7 @@ const Navbar = dynamic(() => Promise.resolve(NavbarComponent), {
                   <span className="text-white font-bold text-sm">FM</span>
                 </div>
                 <span className="font-bold text-xl bg-gradient-to-r from-[#4A72FF] via-[#5C53D1] to-[#712D99] bg-clip-text text-transparent">
-                  FileMate
+                  filesmate
                 </span>
               </Link>
             </div>

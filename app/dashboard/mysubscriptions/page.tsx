@@ -250,7 +250,7 @@ const MySubscriptionPage: React.FC = () => {
         {/* Header */}
         <div className="text-center space-y-4 mt-5">
           <h1 className="text-4xl font-bold text-slate-800">My Subscription</h1>
-          <p className="text-slate-600 text-lg">Manage your FileMate subscription and usage</p>
+          <p className="text-slate-600 text-lg">Manage your filesmate subscription and usage</p>
         </div>
 
         {/* Current Plan Overview */}

@@ -9,7 +9,7 @@ import HeroRedirect from "../ui/HeroRedirect";
 function Hero() {
 
   return (
-    <section className="min-h-screen">
+    <section className="min-h-screen" id="hero">
       {/* <SessionProvider> */}
         <Navbar />
       {/* </SessionProvider> */}

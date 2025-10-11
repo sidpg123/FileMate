@@ -13,7 +13,7 @@ const sansFont = Source_Sans_3({
 });
 
 export const metadata: Metadata = {
-  title: "FileMate",
+  title: "filesmate",
   description: "Store Smart, Access Fast!",
 };
 
