@@ -27,7 +27,31 @@ export default function Footer() {
           <div>
             <h3 className="text-lg ">Quick Links</h3>
             <ul className="mt-2 text-darkLight  text-sm space-y-2">
-cd 
+              <li>
+                <Link href="/" className="hover:text-blue-400">
+                  Home
+                </Link>
+              </li>
+              <li>
+                <Link href="#about" className="hover:text-blue-400">
+                  Features
+                </Link>
+              </li>
+              <li>
+                <Link href="#purchase" className="hover:text-blue-400">
+                  Pricing
+                </Link>
+              </li>
+              <li>
+                <Link href="#faq" className="hover:text-blue-400">
+                  FAQs
+                </Link>
+              </li>
+              <li>
+                <Link href="#contact" className="hover:text-blue-400">
+                  Contact Us
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -36,7 +60,7 @@ cd
             <h3 className="text-lg ">Contact Us</h3>
             <div className="text-darkLight">
               <p className="mt-2 text-sm">📍 Kolhapur, Maharashtra, India</p>
-              <p className="text-sm">📞 +91 XXXXX XXXXX</p>
+              <p className="text-sm">📞 +91 97676 68076</p>
               <p className="text-sm">✉️ sidpgkit@gmail.com</p>
             </div>
 
@@ -50,7 +74,7 @@ cd
                 <FacebookIcon />
               </Link>
               <Link
-                href="https://www.linkedin.com"
+                href="https://www.linkedin.com/in/siddharth-patil-pg01/"
                 className="text-gray-400 hover:text-blue-500 text-xl"
                 aria-label="LinkedIn"
               >
