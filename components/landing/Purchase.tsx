@@ -16,7 +16,7 @@ function Purchase() {
             <div className="text-center">
                 <h1 className="text-sm tracking-widest"> Plans That Make Sense</h1>
                 <h1 className="text-2xl tracking-wider p-3">
-                    So... You Like filesmate?
+                    So... You Like Filesmate?
                 </h1>
                 <h1 className="text-sm mx-4 text-slate-500">
                     Now&apos;s the perfect time to go premium and unlock the real magic.

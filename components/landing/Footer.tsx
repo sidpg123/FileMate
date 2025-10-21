@@ -13,11 +13,11 @@ export default function Footer() {
           {/* About Section */}
           <div>
             <h3 className="text-lg  ">
-              <span className="gradient-text">filesmate</span> - Secure Document
+              <span className="gradient-text">Filesmate</span> - Secure Document
               Management
             </h3>
             <p className="mt-2 text-sm text-darkLight">
-              filesmate helps professionals securely manage and share documents
+              Filesmate helps professionals securely manage and share documents
               with clients, offering features like client-specific access,
               tracking, and notifications.
             </p>
@@ -28,18 +28,18 @@ export default function Footer() {
             <h3 className="text-lg ">Quick Links</h3>
             <ul className="mt-2 text-darkLight  text-sm space-y-2">
               <li>
-                <Link href="/" className="hover:text-blue-400">
-                  Home
+                <Link href="/privacy" className="hover:text-blue-400">
+                  Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link href="#about" className="hover:text-blue-400">
-                  Features
+                <Link href="/refund-policy" className="hover:text-blue-400">
+                  Refund Policy
                 </Link>
               </li>
               <li>
-                <Link href="#purchase" className="hover:text-blue-400">
-                  Pricing
+                <Link href="/terms" className="hover:text-blue-400">
+                  Terms and Conditions
                 </Link>
               </li>
               <li>
@@ -61,7 +61,7 @@ export default function Footer() {
             <div className="text-darkLight">
               <p className="mt-2 text-sm">📍 Kolhapur, Maharashtra, India</p>
               <p className="text-sm">📞 +91 97676 68076</p>
-              <p className="text-sm">✉️ sidpgkit@gmail.com</p>
+              <p className="text-sm">✉️ filesmate.in@gmail.com</p>
             </div>
 
             {/* Social Media Icons */}
@@ -93,7 +93,7 @@ export default function Footer() {
 
         {/* Copyright */}
         <div className="mt-8 text-center text-sm text-gray-500">
-          © {new Date().getFullYear()} filesmate. All Rights Reserved.
+          © {new Date().getFullYear()} Filesmate. All Rights Reserved.
         </div>
       </footer>
     </section>

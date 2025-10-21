@@ -49,15 +49,15 @@ function FAQ() {
           </AccordionItem>
           <AccordionItem value="item-3">
             <AccordionTrigger>
-              Can I track which clients have downloaded their documents?
+              Can clients access only their own documents?
             </AccordionTrigger>
             <AccordionContent>
-              Yes, the platform provides download tracking for each document.
-              You can see which clients have accessed or downloaded their
-              documents, along with the timestamp of the last download. This
-              helps ensure transparency and accountability.
+              Yes, each client can only view and download the documents assigned to them by
+              the admin. This ensures complete privacy and prevents unauthorized access to
+              other clients’ files.
             </AccordionContent>
           </AccordionItem>
+
           <AccordionItem value="item-4">
             <AccordionTrigger>
               Is there a limit to the number of documents I can upload?
@@ -82,14 +82,12 @@ function FAQ() {
           </AccordionItem>
           <AccordionItem value="item-6">
             <AccordionTrigger>
-              What happens if a client forgets their password?
+              How are documents uploaded for clients?
             </AccordionTrigger>
             <AccordionContent>
-              Clients can reset their password using the &quot;Forgot
-              Password&quot; option on the log in page. A password reset link
-              will be sent to their registered email, allowing them to set a new
-              password. For added security, password reset links expire after a
-              short duration.
+              The admin can upload documents directly from their dashboard and assign them
+              to specific clients. Once uploaded, the document becomes instantly available
+              in the client’s portal for secure access and download.
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="item-7">

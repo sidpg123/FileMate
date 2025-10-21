@@ -23,7 +23,7 @@ export default function About() {
     <section id="about" className="min-h-screen ">
       <div className="text-center">
         <h1 className="mt-16 md:mt-0 text-sm">
-          filesmate – Your trusted file management companion.
+          Filesmate – Your trusted file management companion.
         </h1>
         <h1 className="text-2xl tracking-wider p-3">
           Tired of clients calling for documents?

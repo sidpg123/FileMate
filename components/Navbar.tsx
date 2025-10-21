@@ -20,7 +20,7 @@ function Navbar() {
             <div className="flex items-center">
               <div className="flex-shrink-0">
                 <Link className="font-sans font-h bg-gradient-to-r from-[#4A72FF] via-[#5C53D1] to-[#712D99] bg-clip-text text-transparent" href={"/"}>
-                  filesmate
+                  Filesmate
                 </Link>
               </div>
             </div>
