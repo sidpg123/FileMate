@@ -100,7 +100,7 @@ function Navbar() {
               <div className="ml-4 flex items-center space-x-8">
                 <NavLink href="/dashboard">Dashboard</NavLink>
                 <NavLink href="/dashboard/mydocs">My Documents</NavLink>
-                <NavLink href="/dashboard/analytics">Analytics</NavLink>
+                {/* <NavLink href="/dashboard/analytics">Analytics</NavLink> */}
                 <NavLink href="/dashboard/mysubscriptions">Subscriptions</NavLink>
               </div>
             </div>
@@ -166,9 +166,9 @@ function Navbar() {
                   <NavLink href="/dashboard/mydocs" mobile onClick={() => setIsClick(false)}>
                     My Documents
                   </NavLink>
-                  <NavLink href="/dashboard/analytics" mobile onClick={() => setIsClick(false)}>
+                  {/* <NavLink href="/dashboard/analytics" mobile onClick={() => setIsClick(false)}>
                     Analytics
-                  </NavLink>
+                  </NavLink> */}
                   <NavLink href="/dashboard/mysubscriptions" mobile onClick={() => setIsClick(false)}>
                     Subscriptions
                   </NavLink>

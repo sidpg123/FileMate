@@ -5,13 +5,14 @@ import Image from "next/image";
 import Navbar from "../Navbar";
 import { Button } from "../ui/button";
 import HeroRedirect from "../ui/HeroRedirect";
+import Link from "next/link";
 
 function Hero() {
 
   return (
     <section className="min-h-screen" id="hero">
       {/* <SessionProvider> */}
-        <Navbar />
+      <Navbar />
       {/* </SessionProvider> */}
       <div className="flex flex-col md:flex-row-reverse justify-center pt-14 md:pt-32 mx-auto md:max-w-[95%]">
         <div className="w-full mx-auto max-w-[80%] flex justify-center items-center px-6 sm:w-9/12 md:w-2/4 xl:w-[40%]">
@@ -37,10 +38,13 @@ function Hero() {
           </h4>
           <div className="mt-6 flex flex-row">
             {/* <SessionProvider> */}
-              <HeroRedirect route="signup" title="Register" styles="py-5 px-7 mr-3" extraComp={<ArrowCircleUpIcon className="rotate-90" />} />
+            <HeroRedirect route="signup" title="Register" styles="py-5 px-7 mr-3" extraComp={<ArrowCircleUpIcon className="rotate-90" />} />
             {/* </SessionProvider> */}
-            <Button className="py-5 px-7 mx-auto text-[#4A72FF] bg-[#f1f1f3] hover:bg-[#f1eeeeee] shadow-md shadow-slate-300">
-              Learn More
+            <Button
+              asChild
+              className="py-5 px-7 mx-auto text-[#4A72FF] bg-[#f1f1f3] hover:bg-[#f1eeeeee] shadow-md shadow-slate-300"
+            >
+              <Link href="/#about">Learn More</Link>
             </Button>
           </div>
         </div>
