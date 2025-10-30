@@ -63,31 +63,31 @@ function Navbar() {
             <div className="px-2 pb-3 pt-1 space-y-3 flex flex-col items-center">
               <Link
                 className="block hover:border hover:border-cyan-600 p-3 px-4 w-full text-center"
-                href={"/"}
+                href={"/#about"}
               >
                 About
               </Link>
 
               <Link
                 className="block hover:border hover:border-cyan-600 p-3 px-4 w-full text-center"
-                href={"/"}
+                href={"/#contact"}
               >
                 Contact
               </Link>
               <Link
                 className="block hover:border hover:border-cyan-600 p-3 px-4 w-full text-center"
-                href={"/"}
+                href={"/#faq"}
               >
                 FAQ
               </Link>
-              <Link
+              {/* <Link
                 className="block hover:border hover:border-cyan-600 p-3 px-4 w-full text-center"
                 href={"/signin"}
               >
                 Log in
-              </Link>
+              </Link> */}
 
-              <HeroRedirect route="signin" title="Log in" styles="hidden md:block"/>
+              <HeroRedirect route="signin" title="Log in" styles=""/>
             </div>
           </div>
         )}

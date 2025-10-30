@@ -42,9 +42,7 @@ function FAQ() {
             <AccordionContent>
               Once a CA uploads a document, the client can log in to their
               account and view/download their assigned files. Each client only
-              sees their own documents, ensuring privacy and security. Clients
-              will also receive a notification when a new document is uploaded,
-              either via email or an in-app alert.
+              sees their own documents, ensuring privacy and security.
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="item-3">

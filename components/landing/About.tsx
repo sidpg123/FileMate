@@ -70,7 +70,7 @@ export default function About() {
         </div>
 
 
-        <div className="w-80">
+        <div className="w-80 mb-8 md:mb-0">
           <PendingFeeTracking />
           <h1 className="text-center pb-2 tracking-wide text-lg">
             Pending Fee Tracking

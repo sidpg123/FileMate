@@ -8,6 +8,6 @@ export const signUpSchema = z.object({
 
 export const signInSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
-  password: z.string(),
+  password: z.string().nonempty( { message: "Password is required"}),
 });
 
