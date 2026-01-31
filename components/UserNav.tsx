@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Image from "next/image";
 import { toast } from "sonner";
+import Portal from "./Portal";
 
 interface NavLinkProps {
   href: string;
@@ -72,8 +73,8 @@ function Navbar() {
   return (
     <>
       <nav className={`sticky top-0 z-50 transition-all duration-300 ${isScrolled
-          ? 'bg-white/95 backdrop-blur-md shadow-lg border-b border-gray-100'
-          : 'bg-white border-b border-gray-100'
+        ? 'bg-white/95 backdrop-blur-md shadow-lg border-b border-gray-100'
+        : 'bg-white border-b border-gray-100'
         }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
@@ -155,63 +156,66 @@ function Navbar() {
 
         {/* Mobile Menu - Full Screen Overlay */}
         {isClick && (
-          <div className="fixed inset-0 top-16 z-40 md:hidden">
-            <div className="absolute inset-0 bg-white/95 backdrop-blur-md">
-              <div className="flex flex-col h-full">
-                {/* Navigation Links */}
-                <div className="flex-1 px-6 py-8 space-y-4">
-                  <NavLink href="/dashboard" mobile onClick={() => setIsClick(false)}>
-                    Dashboard
-                  </NavLink>
-                  <NavLink href="/dashboard/mydocs" mobile onClick={() => setIsClick(false)}>
-                    My Documents
-                  </NavLink>
-                  {/* <NavLink href="/dashboard/analytics" mobile onClick={() => setIsClick(false)}>
+          <Portal>
+
+            <div className="fixed inset-0 top-16 z-40 md:hidden bg-white">
+              <div className="absolute inset-0 bg-white/95 backdrop-blur-md">
+                <div className="flex flex-col h-full">
+                  {/* Navigation Links */}
+                  <div className="flex-1 px-6 py-8 space-y-4">
+                    <NavLink href="/dashboard" mobile onClick={() => setIsClick(false)}>
+                      Dashboard
+                    </NavLink>
+                    <NavLink href="/dashboard/mydocs" mobile onClick={() => setIsClick(false)}>
+                      My Documents
+                    </NavLink>
+                    {/* <NavLink href="/dashboard/analytics" mobile onClick={() => setIsClick(false)}>
                     Analytics
                   </NavLink> */}
-                  <NavLink href="/dashboard/mysubscriptions" mobile onClick={() => setIsClick(false)}>
-                    Subscriptions
-                  </NavLink>
-                </div>
-
-                {/* Bottom User Section */}
-                <div className="border-t border-gray-200 bg-gray-50/50 p-6">
-                  <div className="flex items-center space-x-3 mb-6">
-                    <Avatar className="h-12 w-12">
-                      <AvatarImage src="" />
-                      <AvatarFallback>
-                        <Image
-                          width={48}
-                          height={48}
-                          src="https://res.cloudinary.com/dbowtoxfh/image/upload/v1749619558/profile-fallback.e7a6f788830c_xjyd8m.jpg"
-                          alt="Profile"
-                          className="rounded-full object-cover"
-                        />
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1">
-                      <p className="text-base font-medium text-gray-900">User Account</p>
-                      <p className="text-sm text-gray-500">Manage your files</p>
-                    </div>
+                    <NavLink href="/dashboard/mysubscriptions" mobile onClick={() => setIsClick(false)}>
+                      Subscriptions
+                    </NavLink>
                   </div>
 
-                  <div className="space-y-3">
-                    {/* <div onClick={() => setIsClick(false)}>
+                  {/* Bottom User Section */}
+                  <div className="border-t border-gray-200 bg-gray-50/50 p-6">
+                    <div className="flex items-center space-x-3 mb-6">
+                      <Avatar className="h-12 w-12">
+                        <AvatarImage src="" />
+                        <AvatarFallback>
+                          <Image
+                            width={48}
+                            height={48}
+                            src="https://res.cloudinary.com/dbowtoxfh/image/upload/v1749619558/profile-fallback.e7a6f788830c_xjyd8m.jpg"
+                            alt="Profile"
+                            className="rounded-full object-cover"
+                          />
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1">
+                        <p className="text-base font-medium text-gray-900">User Account</p>
+                        <p className="text-sm text-gray-500">Manage your files</p>
+                      </div>
+                    </div>
+
+                    <div className="space-y-3">
+                      {/* <div onClick={() => setIsClick(false)}>
                       <NewClientDialog />
                     </div> */}
 
-                    <Button
-                      onClick={handleSignOut}
-                      variant="outline"
-                      className="w-full text-red-600 border-red-300 hover:bg-red-50 hover:text-red-700 transition-colors"
-                    >
-                      Sign Out
-                    </Button>
+                      <Button
+                        onClick={handleSignOut}
+                        variant="outline"
+                        className="w-full text-red-600 border-red-300 hover:bg-red-50 hover:text-red-700 transition-colors"
+                      >
+                        Sign Out
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
+          </Portal>
         )}
       </nav>
     </>

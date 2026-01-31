@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Image from "next/image";
 import { toast } from "sonner";
+import Portal from "./Portal";
 
 function NavbarComponent() {
   const router = useRouter();
@@ -32,10 +33,10 @@ function NavbarComponent() {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10);
     };
-    
+
     // Set initial scroll state
     handleScroll();
-    
+
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -51,19 +52,18 @@ function NavbarComponent() {
   };
 
   return (
-    <nav className={`sticky top-0 z-50 transition-all duration-300 ${
-      isScrolled 
-        ? 'bg-white/95 backdrop-blur-md shadow-lg border-b border-gray-100' 
+    <nav className={`sticky top-0 z-50 transition-all duration-300 ${isScrolled
+        ? 'bg-white/95 backdrop-blur-md shadow-lg border-b border-gray-100'
         : 'bg-white border-b border-gray-100'
-    }`}>
+      }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          
+
           {/* Logo */}
           <div className="flex items-center">
             <div className="flex-shrink-0">
-              <Link 
-                href="/" 
+              <Link
+                href="/"
                 className="flex items-center space-x-2 group"
               >
                 <div className="w-8 h-8 bg-gradient-to-r from-[#4A72FF] via-[#5C53D1] to-[#712D99] rounded-lg flex items-center justify-center transform group-hover:scale-105 transition-transform duration-200">
@@ -84,11 +84,11 @@ function NavbarComponent() {
                   <Avatar className="h-9 w-9 shadow-md ring-2 ring-gray-100 hover:ring-blue-200 transition-all duration-200">
                     <AvatarImage src="" />
                     <AvatarFallback className="bg-gradient-to-r from-gray-100 to-gray-200">
-                      <Image 
-                        width={36} 
-                        height={36} 
-                        src="/images/profile-fallback.jpg" 
-                        alt="Profile" 
+                      <Image
+                        width={36}
+                        height={36}
+                        src="/images/profile-fallback.jpg"
+                        alt="Profile"
                         className="rounded-full object-cover"
                       />
                     </AvatarFallback>
@@ -96,7 +96,7 @@ function NavbarComponent() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-48 mt-2 bg-white border border-gray-200 shadow-lg rounded-lg">
-                <DropdownMenuItem 
+                <DropdownMenuItem
                   onClick={handleSignOut}
                   className="cursor-pointer text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors focus:bg-red-50 focus:text-red-700"
                 >
@@ -126,44 +126,46 @@ function NavbarComponent() {
 
       {/* Mobile Menu - Full Screen Overlay */}
       {isClick && (
-        <div className="fixed inset-0 top-16 z-40 md:hidden">
-          <div className="absolute inset-0 bg-white/95 backdrop-blur-md">
-            <div className="flex flex-col h-full">
-              
-              {/* Bottom User Section */}
-              <div className="border-t border-gray-200 bg-gray-50/50 p-6 mt-auto">
-                <div className="flex items-center space-x-3 mb-6">
-                  <Avatar className="h-12 w-12">
-                    <AvatarImage src="" />
-                    <AvatarFallback>
-                      <Image 
-                        width={48} 
-                        height={48} 
-                        src="/images/profile-fallback.jpg" 
-                        alt="Profile" 
-                        className="rounded-full object-cover"
-                      />
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1">
-                    <p className="text-base font-medium text-gray-900">User Account</p>
-                    <p className="text-sm text-gray-500">Manage your files</p>
+        <Portal>
+          <div className="fixed inset-0 top-16 z-40 md:hidden">
+            <div className="absolute inset-0 bg-white/95 backdrop-blur-md">
+              <div className="flex flex-col h-full">
+
+                {/* Bottom User Section */}
+                <div className="border-t border-gray-200 bg-gray-50/50 p-6 mt-auto">
+                  <div className="flex items-center space-x-3 mb-6">
+                    <Avatar className="h-12 w-12">
+                      <AvatarImage src="" />
+                      <AvatarFallback>
+                        <Image
+                          width={48}
+                          height={48}
+                          src="/images/profile-fallback.jpg"
+                          alt="Profile"
+                          className="rounded-full object-cover"
+                        />
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1">
+                      <p className="text-base font-medium text-gray-900">User Account</p>
+                      <p className="text-sm text-gray-500">Manage your files</p>
+                    </div>
                   </div>
-                </div>
-                
-                <div className="space-y-3">
-                  <Button 
-                    onClick={handleSignOut}
-                    variant="outline" 
-                    className="w-full text-red-600 border-red-300 hover:bg-red-50 hover:text-red-700 transition-colors"
-                  >
-                    Sign Out
-                  </Button>
+
+                  <div className="space-y-3">
+                    <Button
+                      onClick={handleSignOut}
+                      variant="outline"
+                      className="w-full text-red-600 border-red-300 hover:bg-red-50 hover:text-red-700 transition-colors"
+                    >
+                      Sign Out
+                    </Button>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        </Portal>
       )}
     </nav>
   );

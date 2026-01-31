@@ -5,6 +5,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import Link from "next/link";
 import { useState } from "react";
 import HeroRedirect from "./ui/HeroRedirect";
+import Portal from "./Portal";
 function Navbar() {
   const [isClick, setIsClick] = useState(false);
 
@@ -33,7 +34,7 @@ function Navbar() {
               </div>
             </div>
             <div className="hidden md:inline-block">
-              <HeroRedirect route="signin" title="Log in" styles="hidden md:block"/>
+              <HeroRedirect route="signin" title="Log in" styles="hidden md:block" />
             </div>
             <div className="md:hidden flex items-center">
               <Button
@@ -59,40 +60,42 @@ function Navbar() {
           </div>
         </div>
         {isClick && (
-          <div className="md:hidden">
-            <div className="px-2 pb-3 pt-1 space-y-3 flex flex-col items-center">
-              <Link
-                className="block hover:border hover:border-cyan-600 p-3 px-4 w-full text-center"
-                href={"/#about"}
-              >
-                About
-              </Link>
+          <Portal>
+            <div className="md:hidden">
+              <div className="px-2 pb-3 pt-1 space-y-3 flex flex-col items-center">
+                <Link
+                  className="block hover:border hover:border-cyan-600 p-3 px-4 w-full text-center"
+                  href={"/#about"}
+                >
+                  About
+                </Link>
 
-              <Link
-                className="block hover:border hover:border-cyan-600 p-3 px-4 w-full text-center"
-                href={"/#contact"}
-              >
-                Contact
-              </Link>
-              <Link
-                className="block hover:border hover:border-cyan-600 p-3 px-4 w-full text-center"
-                href={"/#faq"}
-              >
-                FAQ
-              </Link>
-              {/* <Link
+                <Link
+                  className="block hover:border hover:border-cyan-600 p-3 px-4 w-full text-center"
+                  href={"/#contact"}
+                >
+                  Contact
+                </Link>
+                <Link
+                  className="block hover:border hover:border-cyan-600 p-3 px-4 w-full text-center"
+                  href={"/#faq"}
+                >
+                  FAQ
+                </Link>
+                {/* <Link
                 className="block hover:border hover:border-cyan-600 p-3 px-4 w-full text-center"
                 href={"/signin"}
               >
-                Log in
+              Log in
               </Link> */}
 
-              <HeroRedirect route="signin" title="Log in" styles=""/>
+                <HeroRedirect route="signin" title="Log in" styles="" />
+              </div>
             </div>
-          </div>
+          </Portal>
         )}
       </nav>
-    </> 
+    </>
   );
 }
 
