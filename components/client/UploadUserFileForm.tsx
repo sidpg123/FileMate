@@ -69,9 +69,10 @@ export default function UploadUserFileForm() {
     const uploadFileMetaDataMutation = useMutation({
         mutationFn: uploadUserDocMetaData,
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["documents"] });
-            queryClient.invalidateQueries({ queryKey: ["client"] });
-            toast.success("Document added to client files!");
+            // queryClient.invalidateQueries({ queryKey: ["documents"] });
+            queryClient.invalidateQueries({ queryKey: ["userDocuments"] });
+            // queryClient.invalidateQueries({ queryKey: ["client"] });
+            toast.success("Document added to user files!");
         },
         onError: () => {
             toast.error("Failed to save document information");
@@ -117,7 +118,7 @@ export default function UploadUserFileForm() {
                     fileKey: key,
                     fileName: originalFileName,
                     fileSize: values.file.size,
-                    thumbnailKey: fileExt == 'pdf' ? `users/personal/${values.year}/${uuid}-thumb.jpg` : 'public/default.jpg',
+                    thumbnailKey: fileExt == 'pdf' ? `users/${userId}/personal/${values.year}/${uuid}-thumb.jpg` : 'public/default.jpg',
                     year: values.year
                 }
             })
