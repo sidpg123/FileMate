@@ -60,14 +60,14 @@ export default function FileOptionsDropdown({
                     >
                         Delete
                     </DropdownMenuItem>
-                    <DropdownMenuItem
+                    {/* <DropdownMenuItem
                         onSelect={(e) => {
                             e.preventDefault();
                             handleEditClick();
                         }}
                     >
                         Edit File Info
-                    </DropdownMenuItem>
+                    </DropdownMenuItem> */}
                 </DropdownMenuContent>
             </DropdownMenu>
 

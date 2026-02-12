@@ -93,7 +93,7 @@ export default function ClientDocs({
 
 
                     {/* Documents Grid with Improved Layout */}
-                    <div className="container mx-auto px-4 space-y-12">
+                    <div className="container mx-auto px-4 space-y-12 mb-10">
                         {Object.entries(groupedDocs).map(([year, docs]) => (
                             <div key={year} className="space-y-6">
                                 {/* Year Header with Modern Design */}
@@ -124,6 +124,12 @@ export default function ClientDocs({
                             </div>
                         ))}
                     </div>
+
+                    {!hasNextPage && allDocs.length > 0 && (
+                        <div className="text-center py-6 text-sm text-gray-500 border-t">
+                            You&apos;ve reached the end of the list
+                        </div>
+                    )}
 
                     {/* Load More Button with Better Styling */}
                     {hasNextPage && (
