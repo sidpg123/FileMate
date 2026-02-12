@@ -1,14 +1,13 @@
-import React from 'react';
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { useCurrentFileStore } from '@/store/store';
-import EditFileInfoDialogue from './EditFileInfoDialogue';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 import DeleteFileDialogue from './DeleteFileDialogue';
+import EditFileInfoDialogue from './EditFileInfoDialogue';
 
 interface FileOptionsDropdownProps {
     isOpen: boolean;
@@ -25,7 +24,7 @@ export default function FileOptionsDropdown({
 }: FileOptionsDropdownProps) {
     
     const setOpenDeleteFileDialog = useCurrentFileStore((state) => state.setOpenDeleteFileDialog);
-    const setOpenUpdateFileDialog = useCurrentFileStore((state) => state.setOpenUpdateFileDialog);
+    // const setOpenUpdateFileDialog = useCurrentFileStore((state) => state.setOpenUpdateFileDialog);
     const currentFileId = useCurrentFileStore((state) => state.fileId);
     
     const handleDeleteClick = () => {
@@ -34,11 +33,11 @@ export default function FileOptionsDropdown({
         onOpenChange(false);
     };
 
-    const handleEditClick = () => {
-        onAction(); // Set the file metadata
-        setOpenUpdateFileDialog(true);
-        onOpenChange(false);
-    };
+    // const handleEditClick = () => {
+    //     onAction(); // Set the file metadata
+    //     setOpenUpdateFileDialog(true);
+    //     onOpenChange(false);
+    // };
 
     // Only render dialogs for the currently selected file
     const shouldRenderDialogs = currentFileId === cardId;
