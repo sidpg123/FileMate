@@ -82,6 +82,10 @@ export default function UploadUserFileForm() {
 
     async function onSubmit(values: UploadFileFormSchemaType) {
         try {
+            if(isUploading) {
+                toast.error("An upload is already in progress. Please wait.");
+                return;
+            }
             if (!values.file) {
                 toast.error("Please select a file to upload");
                 return;

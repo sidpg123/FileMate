@@ -67,7 +67,7 @@ export function EditClientForm() {
                 clientId: data.clientId,
             })
             setEditClientDialogOpen(false)
-            form.reset()
+            // form.reset()
         },
         onError: (err) => {
              if (err instanceof AxiosError) {
@@ -80,6 +80,7 @@ export function EditClientForm() {
 
     function onSubmit(values: z.infer<typeof EditClientFormSchema>) {
         //console.log("accesstoken", session.data?.accessToken);
+        if(isPending) return 
         mutate({
             clientId: clientId,
             data: values,

@@ -18,7 +18,7 @@ export default function DeleteFeesDialogue({ feeId, clientId }: { feeId: string,
     const [open, setOpen] = useState(false);
     const queryClient = useQueryClient();
 
-    const { mutate, status } = useMutation({
+    const { mutate, status, isPending } = useMutation({
         mutationFn: deleteFee,
         onMutate: () => {
             // Show loading toast when mutation starts
@@ -45,6 +45,7 @@ export default function DeleteFeesDialogue({ feeId, clientId }: { feeId: string,
     });
 
     const handleDelete = async () => {
+        if(isPending) return;
         const deleteData = {
             clientId: clientId,
             feeId: feeId

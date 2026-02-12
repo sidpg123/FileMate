@@ -36,7 +36,7 @@ function Navbar() {
             <div className="hidden md:inline-block">
               <HeroRedirect route="signin" title="Log in" styles="hidden md:block" />
             </div>
-            <div className="md:hidden flex items-center">
+            <div className="md:hidden flex items-center fixed top-4 right-4 z-50">
               <Button
                 onClick={toggleNavbar}
                 variant={"secondary"}
@@ -61,7 +61,7 @@ function Navbar() {
         </div>
         {isClick && (
           <Portal>
-            <div className="md:hidden">
+            <div className="md:hidden fixed top-16 left-0 w-full bg-white/85 backdrop-blur-md z-40">
               <div className="px-2 pb-3 pt-1 space-y-3 flex flex-col items-center">
                 <Link
                   className="block hover:border hover:border-cyan-600 p-3 px-4 w-full text-center"
@@ -76,7 +76,7 @@ function Navbar() {
                 >
                   Contact
                 </Link>
-                <Link
+                <Link 
                   className="block hover:border hover:border-cyan-600 p-3 px-4 w-full text-center"
                   href={"/#faq"}
                 >

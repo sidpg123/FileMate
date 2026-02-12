@@ -157,8 +157,7 @@ function Navbar() {
         {/* Mobile Menu - Full Screen Overlay */}
         {isClick && (
           <Portal>
-
-            <div className="fixed inset-0 top-16 z-40 md:hidden bg-white">
+            <div className="fixed inset-0 top-16 z-40 md:hidden bg-white ">
               <div className="absolute inset-0 bg-white/95 backdrop-blur-md">
                 <div className="flex flex-col h-full">
                   {/* Navigation Links */}

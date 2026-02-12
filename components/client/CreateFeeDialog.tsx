@@ -104,7 +104,7 @@ function CreateFeeDialog({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-
+    if(createFeeMutation.isPending) return;
     if (!formData.amount || !formData.dueDate || !formData.categoryId) {
       toast.error('Please fill in all required fields')
       return

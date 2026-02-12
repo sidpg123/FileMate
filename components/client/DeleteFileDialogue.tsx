@@ -41,6 +41,7 @@ export default function DeleteFileDialogue() {
     });
 
     const handleDelete = async () => {
+        if(status === 'pending') return;
         const deleteData = {
             clientId: useCurrentClient.getState().clientId,
             key: useCurrentFileStore.getState().key,

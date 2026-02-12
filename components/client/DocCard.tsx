@@ -34,7 +34,7 @@ async function waitForThumbnail(thumbnailUrl: string, maxRetries = 3) {
   for (let i = 0; i < maxRetries; i++) {
     const exists = await checkImageExists(thumbnailUrl);
     if (exists) return true;
-    await new Promise((res) => setTimeout(res, 4000));
+    await new Promise((res) => setTimeout(res, 6000));
   }
   return false;
 }

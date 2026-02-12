@@ -87,6 +87,12 @@ export default function UploadFileForm() {
                 toast.error("Please select a file to upload");
                 return;
             }
+
+            if(isUploading) {
+                toast.error("An upload is already in progress. Please wait.");
+                return;
+            }
+            
             const uuid = uuidV4();
             const originalFileName = values.file.name;
             const fileExt = originalFileName.split(".").pop()?.toLowerCase();

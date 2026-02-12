@@ -1,4 +1,5 @@
 "use client"
+
 import { NewClientFormSchema, NewClientFormSchemaType } from '@/zodSchem/cleint.schemas'
 import { zodResolver } from '@hookform/resolvers/zod'
 import React from 'react'
@@ -20,10 +21,8 @@ import { createClient } from '@/lib/api/client'
 import { toast } from 'sonner'
 import { AxiosError } from 'axios'
 
-
-
 export default function NewClientForm() {
-    const queryClient = useQueryClient();
+    const queryClient = useQueryClient()
 
     const form = useForm<NewClientFormSchemaType>({
         resolver: zodResolver(NewClientFormSchema),
@@ -33,42 +32,45 @@ export default function NewClientForm() {
             phone: "",
         },
     })
-    const setOpenNewUserDialog = useNewUserFormStore((state) => state.setOpenNewUserDialog)
 
+    const setOpenNewUserDialog = useNewUserFormStore(
+        (state) => state.setOpenNewUserDialog
+    )
 
-    const { mutate } = useMutation({
+    const { mutate, isPending } = useMutation({
         mutationFn: createClient,
         onSuccess: () => {
-            //console.log("Client created successfully:", data)
-            // You can handle success here, like showing a toast or updating state
-            queryClient.invalidateQueries({ queryKey: ['clients'] }) // Invalidate the clients list query to refetch
-            queryClient.invalidateQueries({ queryKey: ['userInfo'] }) // Invalidate the clients list query to refetch
-            setOpenNewUserDialog(false) // Close the dialog after successful submission
-            toast.success("Client created successfully");
+            queryClient.invalidateQueries({ queryKey: ['clients'] })
+            queryClient.invalidateQueries({ queryKey: ['userInfo'] })
+
+            toast.success("Client created successfully")
+
+            form.reset()
+            setOpenNewUserDialog(false)
         },
         onError: (error) => {
-            // console.error("Error creating client:", error)
-            if(error instanceof AxiosError){
-                toast.error(error.response?.data.message || "Failed to create client")
+            if (error instanceof AxiosError) {
+                toast.error(
+                    error.response?.data.message || "Failed to create client"
+                )
+            } else {
+                toast.error("Something went wrong")
             }
-            // Handle error here, like showing an error message
         }
     })
 
     function onSubmit(values: NewClientFormSchemaType) {
-        // mutate({
-        //     data: values
-        // }) // Call the mutation function with the form values
-        mutate({data: values});
-        // //console.log(values)
-        
-
-        // setOpenNewUserDialog(false) // Close the dialog after submission
+        if (isPending) return
+        mutate({ data: values })
     }
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-6 px-1 w-full max-w-md mx-auto"
+            >
+                {/* Name */}
                 <FormField
                     control={form.control}
                     name="name"
@@ -76,15 +78,24 @@ export default function NewClientForm() {
                         <FormItem>
                             <FormLabel>Name</FormLabel>
                             <FormControl>
-                                <Input placeholder="John Doe" {...field} />
+                                <Input
+                                    autoFocus
+                                    placeholder="John Doe"
+                                    autoComplete="name"
+                                    disabled={isPending}
+                                    className="h-11"
+                                    {...field}
+                                />
                             </FormControl>
                             <FormDescription>
-                                This is your public display name.
+                                Client display name.
                             </FormDescription>
                             <FormMessage />
                         </FormItem>
                     )}
                 />
+
+                {/* Email */}
                 <FormField
                     control={form.control}
                     name="email"
@@ -92,12 +103,21 @@ export default function NewClientForm() {
                         <FormItem>
                             <FormLabel>Email</FormLabel>
                             <FormControl>
-                                <Input placeholder="johndeo@gmail.com" {...field} />
+                                <Input
+                                    type="email"
+                                    placeholder="john@gmail.com"
+                                    autoComplete="email"
+                                    disabled={isPending}
+                                    className="h-11"
+                                    {...field}
+                                />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
                     )}
                 />
+
+                {/* Phone */}
                 <FormField
                     control={form.control}
                     name="phone"
@@ -105,13 +125,29 @@ export default function NewClientForm() {
                         <FormItem>
                             <FormLabel>Phone</FormLabel>
                             <FormControl>
-                                <Input placeholder="+91 8080808080" {...field} />
+                                <Input
+                                    type="tel"
+                                    placeholder="1234567890"
+                                    autoComplete="tel"
+                                    maxLength={10}
+                                    disabled={isPending}
+                                    className="h-11"
+                                    {...field}
+                                />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
                     )}
                 />
-                <Button type="submit">Submit</Button>
+
+                {/* Submit */}
+                <Button
+                    type="submit"
+                    disabled={isPending}
+                    className="w-full h-11 mt-2"
+                >
+                    {isPending ? "Creating Client..." : "Create Client"}
+                </Button>
             </form>
         </Form>
     )

@@ -138,14 +138,12 @@ export default function SignInForm() {
 
                 // Get the session to determine redirect path
                 const session = await getSession();
-                
+                console.log("session", session)
                 if (session?.user?.role === 'admin') {
                     router.push('/admin');
-                } else if (session?.user?.role === 'client') {
+                } else if (session?.user?.role === 'client' || session?.user?.role === 'CA') {
                     router.push('/dashboard');
-                } else {
-                    router.push('/');
-                }
+                } 
             } else {
                 // This case handles when result is neither error nor ok
                 console.log("Unexpected result state:", result);

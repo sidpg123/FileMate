@@ -98,6 +98,11 @@ export default function EditFeeDialog({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
 
+    if(updateFeeMutation.isPending) {
+      toast.error('Please wait, the fee record is being updated.')
+      return
+    }
+
     if (!formData.amount || !formData.dueDate) {
       toast.error('Please fill in all required fields')
       return
